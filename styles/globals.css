@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@layer utilities {
+    .animation-delay-2000 {
+        animation-delay: 2000ms;
+    }
+    .animation-delay-4000 {
+        animation-delay: 4000ms;
+    }
+}
+
+button {
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
