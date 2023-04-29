@@ -79,6 +79,7 @@ Make sure each generated answer is complete, contains short sentences, and is ba
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 0.5 } },
   };
+  
 
   return (
     <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
@@ -87,6 +88,7 @@ Make sure each generated answer is complete, contains short sentences, and is ba
         <title>Health Align</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      
       <Header />
       <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-12 sm:mt-10">
         
@@ -110,7 +112,19 @@ Make sure each generated answer is complete, contains short sentences, and is ba
         </div>
         <div className="mt-10">
 
-          <Image src="/fotor_2023-4-30_0_58_9.png" width={1920}height={1080} alt="Health Aligh - Plant Based Supplements" className="pb-6"/>
+          <motion.div
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ duration: 1 }}
+>
+  <Image
+    src="/fotor_2023-4-30_0_58_9.png"
+    width={1920}
+    height={1080}
+    alt="Health Aligh - Plant Based Supplements"
+    className="pb-6"
+  />
+</motion.div>
         
         
       </div>
@@ -190,19 +204,20 @@ Make sure each generated answer is complete, contains short sentences, and is ba
               >
                 {generatedBios
                   .split("\n")
-                  .map((generatedBio) => {
+                  .map((generatedBio, index) => {
+                    if(generatedBio.trim() === "") return null;
                     return (
                       <div
-                        className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-copy border"
+                        className="bg-white dark:bg-gray-700 rounded-xl shadow-md p-4 hover:bg-gray-100 dark:hover:bg-gray-600 transition cursor-copy border dark:border-gray-600"
                         onClick={() => {
                           navigator.clipboard.writeText(generatedBio);
                           toast("Bio copied to clipboard", {
                             icon: "✂️",
                           });
                         }}
-                        key={generatedBio}
+                        key={index}
                       >
-                        <p>{generatedBio}</p>
+                        <p className="dark:text-gray-200">{generatedBio.replace(/^\d+\.\s*/, "")}</p>
                       </div>
                     );
                   })}
@@ -212,7 +227,9 @@ Make sure each generated answer is complete, contains short sentences, and is ba
         </div>
       </main>
       <Footer />
+                  
     </div>
+    
   );
 };
 
