@@ -1,37 +1,68 @@
-import Head from 'next/head'
+// pages/about.tsx
 
-export default function About() {
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import { motion } from 'framer-motion';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+
+const About: NextPage = () => {
   return (
-    <>
+    <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
-        <title>About - Your Company</title>
+        <title>About - Health Align</title>
         <link rel="icon" href="/favicon.ico" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
       </Head>
 
-      <div className="bg-white min-h-screen">
-        <header className="absolute inset-x-0 top-0 z-50">
-          {/* Add your navigation code from the Tailwind component here */}
-        </header>
+      <Header />
 
-        <main className="relative isolate px-6 pt-14 lg:px-8">
-          <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
-            {/* Add your background divs code from the Tailwind component here */}
-          </div>
-          <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
-            <div className="text-center">
-              <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">About Your Company</h1>
-              <p className="mt-6 text-lg leading-8 text-gray-600">Your Company provides data-driven solutions to help businesses grow online. Our team of experts is dedicated to delivering innovative products and services that enable our clients to thrive in an increasingly competitive digital landscape.</p>
-              <div className="mt-10 flex items-center justify-center gap-x-6">
-                <a href="/signup" className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Join us</a>
-                <a href="/contact" className="text-sm font-semibold leading-6 text-gray-900">Contact us <span aria-hidden="true">→</span></a>
-              </div>
-            </div>
-          </div>
-          <div className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]" aria-hidden="true">
-            {/* Add your background divs code from the Tailwind component here */}
-          </div>
-        </main>
-      </div>
-    </>
-  )
-}
+      <main className="flex flex-1 flex-col items-center justify-center w-full px-4 mt-12 sm:mt-10">
+        <motion.h1
+          className="sm:text-6xl text-4xl max-w-[708px] font-bold text-slate-900 mb-8"
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          About Health Align
+        </motion.h1>
+
+        <div className="max-w-3xl w-full text-center">
+          <p className="text-slate-500 mb-6">
+            Health Align is a platform dedicated to helping you discover your
+            optimal health needs through plant-based nature's secrets. Our goal
+            is to provide personalized health recommendations based on your
+            unique conditions, goals, or desired outcomes.
+          </p>
+
+          <p className="text-slate-500 mb-6">
+            We believe that nature has the power to heal, and our mission is to
+            uncover the most effective plant-based supplements, treatments, and
+            lifestyle changes that can help you live a healthier, happier life.
+          </p>
+
+          <p className="text-slate-500 mb-6">
+            Our team of health experts, researchers, and developers work
+            tirelessly to provide you with accurate, up-to-date, and
+            evidence-based health information. We're constantly exploring the
+            latest research, trends, and breakthroughs in natural medicine to
+            ensure that you have access to the best possible health advice.
+          </p>
+
+          <p className="text-slate-500">
+            Thank you for choosing Health Align to be your trusted source for
+            plant-based health solutions. We look forward to helping you on
+            your journey to optimal health and well-being.
+          </p>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default About;

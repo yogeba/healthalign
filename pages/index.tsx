@@ -22,7 +22,7 @@ const Home: NextPage = () => {
     }
   };
 
-  const prompt = `Answer the following questions about ${topic}.
+  const prompt = `As Andrew Huberman, provide low-cost, low-risk, and high-output information and solutions on the following health-related questions about ${topic}:
       1. What is ${topic}? Provide a brief definition and overview.
       2. What are the main signs and symptoms of ${topic}? List at least 5.
       3. How is ${topic} diagnosed? Describe the process and any tests involved.
@@ -33,13 +33,21 @@ const Home: NextPage = () => {
       8. What causes ${topic}? Describe the factors and possible triggers.
       9. What is the latest research on ${topic}? Provide a brief summary and links to at least 2 research articles.
       10. List 10 supplements that may be beneficial for ${topic}
-      11. List atleast 5 plant-based supplements that may be beneficial for ${topic}
+      11. List at least 5 plant-based supplements that may be beneficial for ${topic}
 
 Make sure each generated answer is complete, contains short sentences, and is based on the context: ${topic}${topic.slice(-1) === "." ? "" : "."}`;
+
+
+
 
   const generateBio = async (e: any) => {
     e.preventDefault();
     setGeneratedBios("");
+    // Check if the topic is related to health
+  // if (!isHealthRelated(topic)) {
+  //   toast("Please enter a health-related topic.", { icon: "⚠️" });
+  //   return;
+  // }
     setLoading(true);
     const response = await fetch("/api/generate", {
       method: "POST",
@@ -81,12 +89,20 @@ Make sure each generated answer is complete, contains short sentences, and is ba
   };
   
 
+
+  
+
   return (
     <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
 
       <Head>
         <title>Health Align</title>
         <link rel="icon" href="/favicon.ico" />
+        <meta
+            name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+/>
+
       </Head>
       
       <Header />
@@ -100,13 +116,14 @@ Make sure each generated answer is complete, contains short sentences, and is ba
         </div>
         
         <motion.h1
-          className="sm:text-6xl text-4xl max-w-[708px] font-bold text-slate-900"
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          Discover Your Optimal Health Needs
-        </motion.h1>
+  className="text-4xl sm:text-6xl max-w-[708px] font-bold text-slate-900"
+  initial={{ y: -100, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ duration: 0.5 }}
+>
+  Discover Your Optimal Health Needs
+</motion.h1>
+
         
         <p className="text-slate-500 mt-5"> Plant Based Nature's Secrets for a Healthier, Happier Life.</p>
         </div>
@@ -229,7 +246,6 @@ Make sure each generated answer is complete, contains short sentences, and is ba
       <Footer />
                   
     </div>
-    
   );
 };
 

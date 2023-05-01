@@ -33,7 +33,7 @@ export default function Footer() {
           aria-label="HealthAlign on Twitter"
           target="_blank"
           rel="noreferrer"
-        >
+          legacyBehavior>
           <svg
             aria-hidden="true"
             className="h-6 w-6 fill-slate-500 group-hover:fill-slate-700"
