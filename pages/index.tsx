@@ -1,26 +1,25 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
-import {motion} from "framer-motion"
+import { motion } from "framer-motion";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import LoadingDots from "../components/LoadingDots";
-
+import axios from "axios";
+import ProductList from "../components/ProductList";
+import { Product } from "../types";
 
 const Home: NextPage = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [topic, setTopic] = useState("");
-  const [generatedBios, setGeneratedBios] = useState<String>("");
+  const [generatedBios, setGeneratedBios] = useState<string>("");
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [cartId, setCartId] = useState<string>("");
 
-  const contentRef = useRef<null | HTMLDivElement>(null);
-
-  const scrollToBios = () => {
-    if (contentRef.current !== null) {
-      contentRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  // References
+  const cartIdRef = useRef<string | null>(null);
 
   const prompt = `As Andrew Huberman, provide low-cost, low-risk, and high-output information and solutions on the following health-related questions about ${topic}:
       1. What is ${topic}? Provide a brief definition and overview.
@@ -35,19 +34,59 @@ const Home: NextPage = () => {
       10. List 10 supplements that may be beneficial for ${topic}
       11. List at least 5 plant-based supplements that may be beneficial for ${topic}
 
-Make sure each generated answer is complete, contains short sentences, and is based on the context: ${topic}${topic.slice(-1) === "." ? "" : "."}`;
+Make sure each generated answer is complete, contains short sentences, and is based on the context: ${topic}${
+    topic.slice(-1) === "." ? "" : "."
+  }`;
 
+  const contentRef = useRef<null | HTMLDivElement>(null);
 
+  const scrollToBios = () => {
+    if (contentRef.current !== null) {
+      contentRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
+  // Extract supplement names from the response
+
+  const extractSupplementNames = (response: string) => {
+    const lines = response.split("\n");
+    const question10Supplements = lines.find((line) => line.startsWith("10."));
+    const question11Supplements = lines.find((line) => line.startsWith("11."));
+
+    const supplementNames = question10Supplements
+      ? question10Supplements.replace(/^10\.\s*/, "").split(", ")
+      : [];
+
+    const plantBasedSupplementNames = question11Supplements
+      ? question11Supplements.replace(/^11\.\s*/, "").split(", ")
+      : [];
+
+    return { supplementNames, plantBasedSupplementNames };
+  };
+
+  // Fetch products from Rye API
+
+  async function fetchRyeProducts(query: string): Promise<Product[]> {
+    const API_KEY = process.env.RYE_API_KEY;
+
+    const response = await axios.get(
+      "/api/rye?query=" + encodeURIComponent(query)
+    );
+    const products = response.data;
+    setFilteredProducts((prevProducts) => [
+      ...prevProducts,
+      ...products.products,
+    ]);
+
+    console.log("All Products: ", filteredProducts);
+    return products.products;
+  }
+
+  // Event handlers
 
   const generateBio = async (e: any) => {
     e.preventDefault();
     setGeneratedBios("");
-    // Check if the topic is related to health
-  // if (!isHealthRelated(topic)) {
-  //   toast("Please enter a health-related topic.", { icon: "⚠️" });
-  //   return;
-  // }
     setLoading(true);
     const response = await fetch("/api/generate", {
       method: "POST",
@@ -79,72 +118,102 @@ Make sure each generated answer is complete, contains short sentences, and is ba
       const chunkValue = decoder.decode(value);
       setGeneratedBios((prev) => prev + chunkValue);
     }
+
     scrollToBios();
     setLoading(false);
   };
+
+  // Side effects
+
+  useEffect(() => {
+    if (!loading && generatedBios !== "") {
+      console.log(generatedBios);
+
+      Promise.resolve().then(async () => {
+        const { supplementNames, plantBasedSupplementNames } =
+          extractSupplementNames(generatedBios);
+        console.log("Extracted Supplement Names:", supplementNames);
+        console.log(
+          "Extracted Plant-based Supplement Names:",
+          plantBasedSupplementNames
+        );
+
+        const allSupplementNames = [
+          ...supplementNames,
+          ...plantBasedSupplementNames,
+        ];
+
+        for (const supplementName of allSupplementNames) {
+          try {
+            const products = await fetchRyeProducts(supplementName);
+            console.log(`Rye products for "${supplementName}":`, products);
+          } catch (error) {
+            console.error(
+              `Error fetching Rye products for "${supplementName}":`,
+              error
+            );
+          }
+        }
+      });
+    }
+  }, [loading, generatedBios]);
+
+  useEffect(() => {
+    setFilteredProducts([]);
+  }, [topic]);
 
   const fadeInVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 0.5 } },
   };
-  
-
-
-  
 
   return (
     <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
-
       <Head>
         <title>Health Align</title>
         <link rel="icon" href="/favicon.ico" />
         <meta
-            name="viewport"
-  content="width=device-width, initial-scale=1, shrink-to-fit=no"
-/>
-
+          name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
       </Head>
-      
-      <Header />
+
+      <Header cartId={cartId} />
       <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-12 sm:mt-10">
-        
-        
         <div className="relative">
           <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply  fliter blur-xl opacity-50 animate-blob"></div>
           <div className="absolute top-0 -right-1 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply fliter blur-xl opacity-50 animate-blob animation-delay-2000"></div>
-          <div className="absolute -bottom-2- left-20 w-72 h-72 bg-green-200 rounded-full mix-blend-multiply fliter blur-xl opacity-50 animate-blob animation-delay-4000">
-        </div>
-        
-        <motion.h1
-  className="text-4xl sm:text-6xl max-w-[708px] font-bold text-slate-900"
-  initial={{ y: -100, opacity: 0 }}
-  animate={{ y: 0, opacity: 1 }}
-  transition={{ duration: 0.5 }}
->
-  Discover Your Optimal Health Needs
-</motion.h1>
+          <div className="absolute -bottom-2- left-20 w-72 h-72 bg-green-200 rounded-full mix-blend-multiply fliter blur-xl opacity-50 animate-blob animation-delay-4000"></div>
 
-        
-        <p className="text-slate-500 mt-5"> Plant Based Nature's Secrets for a Healthier, Happier Life.</p>
+          <motion.h1
+            className="text-4xl sm:text-6xl max-w-[708px] font-bold text-slate-900"
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            Discover Your Optimal Health Needs
+          </motion.h1>
+
+          <p className="text-slate-500 mt-5">
+            {" "}
+            Plant Based Nature's Secrets for a Healthier, Happier Life.
+          </p>
         </div>
         <div className="mt-10">
-
           <motion.div
-  initial={{ opacity: 0 }}
-  animate={{ opacity: 1 }}
-  transition={{ duration: 1 }}
->
-  <Image
-    src="/fotor_2023-4-30_0_58_9.png"
-    width={1920}
-    height={1080}
-    alt="Health Aligh - Plant Based Supplements"
-    className="pb-6"
-  />
-</motion.div>
-        
-        
-      </div>
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+          >
+            <Image
+              src="/fotor_2023-4-30_0_58_9.png"
+              width={1920}
+              height={1080}
+              alt="Health Aligh - Plant Based Supplements"
+              className="pb-6"
+            />
+          </motion.div>
+        </div>
         <div className="max-w-xl w-full">
           <div className="flex mt-10 items-center space-x-3">
             <Image
@@ -219,32 +288,37 @@ Make sure each generated answer is complete, contains short sentences, and is ba
                 animate="visible"
                 variants={fadeInVariants}
               >
-                {generatedBios
-                  .split("\n")
-                  .map((generatedBio, index) => {
-                    if(generatedBio.trim() === "") return null;
-                    return (
-                      <div
-                        className="bg-white dark:bg-gray-700 rounded-xl shadow-md p-4 hover:bg-gray-100 dark:hover:bg-gray-600 transition cursor-copy border dark:border-gray-600"
-                        onClick={() => {
-                          navigator.clipboard.writeText(generatedBio);
-                          toast("Bio copied to clipboard", {
-                            icon: "✂️",
-                          });
-                        }}
-                        key={index}
-                      >
-                        <p className="dark:text-gray-200">{generatedBio.replace(/^\d+\.\s*/, "")}</p>
-                      </div>
-                    );
-                  })}
-                  </motion.div>
+                {generatedBios.split("\n").map((generatedBio, index) => {
+                  if (generatedBio.trim() === "") return null;
+                  return (
+                    <div
+                      className="bg-white dark:bg-gray-700 rounded-xl shadow-md p-4 hover:bg-gray-100 dark:hover:bg-gray-600 transition cursor-copy border dark:border-gray-600"
+                      onClick={() => {
+                        navigator.clipboard.writeText(generatedBio);
+                        toast("Bio copied to clipboard", {
+                          icon: "✂️",
+                        });
+                      }}
+                      key={index}
+                    >
+                      <p className="dark:text-gray-200">
+                        {generatedBio.replace(/^\d+\.\s*/, "")}
+                      </p>
+                    </div>
+                  );
+                })}
+              </motion.div>
             </>
           )}
+          <div>
+            {filteredProducts.length > 0 && (
+              <h1 className="text-2xl font-bold mb-6">Supplements for you</h1>
+            )}
+            <ProductList products={filteredProducts} />
+          </div>
         </div>
       </main>
       <Footer />
-                  
     </div>
   );
 };

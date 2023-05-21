@@ -5,6 +5,7 @@ import Head from 'next/head';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import Image from 'next/image';
 
 const About: NextPage = () => {
   return (
@@ -20,7 +21,10 @@ const About: NextPage = () => {
 
       <Header />
 
+      
       <main className="flex flex-1 flex-col items-center justify-center w-full px-4 mt-12 sm:mt-10">
+        <Image src="/about.jpg" alt='About Health Align' width={1920} height={1200}></Image>
+
         <motion.h1
           className="sm:text-6xl text-4xl max-w-[708px] font-bold text-slate-900 mb-8"
           initial={{ y: -100, opacity: 0 }}
