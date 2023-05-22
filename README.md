@@ -1,4 +1,4 @@
-# [TwitterBio.com](https://www.twitterbio.com/)
+# [healthalign.in](https://www.healthalign.in/)
 
 This project generates Twitter bios for you using AI.
 
