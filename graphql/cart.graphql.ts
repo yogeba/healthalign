@@ -2,10 +2,92 @@
 import { gql } from "@apollo/client";
 
 export const CREATE_CART = gql`
-  mutation ($input: CartCreateInput!) {
+  mutation createCart($input: CartCreateInput!) {
     createCart(input: $input) {
-      cart {
-        id
+      id
+      stores {
+        ... on AmazonStore {
+          store
+          cartLines {
+            quantity
+            product {
+              id
+            }
+          }
+          offer {
+            subtotal {
+              value
+              currency
+              displayValue
+            }
+            margin {
+              value
+              currency
+              displayValue
+            }
+            notAvailableIds
+            shippingMethods {
+              id
+              label
+              taxes {
+                value
+                currency
+                displayValue
+              }
+              price {
+                value
+                currency
+                displayValue
+              }
+              total {
+                value
+                currency
+                displayValue
+              }
+            }
+          }
+        }
+        ... on ShopifyStore {
+          store
+          cartLines {
+            quantity
+            variant {
+              id
+            }
+          }
+          offer {
+            subtotal {
+              value
+              currency
+              displayValue
+            }
+            margin {
+              value
+              currency
+              displayValue
+            }
+            notAvailableIds
+            shippingMethods {
+              id
+              label
+              taxes {
+                value
+                currency
+                displayValue
+              }
+              price {
+                value
+                currency
+                displayValue
+              }
+              total {
+                value
+                currency
+                displayValue
+              }
+            }
+          }
+        }
       }
     }
   }

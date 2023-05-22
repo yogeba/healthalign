@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Product } from "../types";
 import { CREATE_CART, ADD_CART_ITEMS } from "../graphql/cart.graphql";
 import { useMutation } from "@apollo/client";
+import { fetchProduct } from "../lib/fetchProduct";
 
 interface ProductListProps {
   products?: Product[];
@@ -18,29 +19,36 @@ const ProductList: React.FC<ProductListProps> = ({ products = [] }) => {
   const handleBuyNow = async (product: Product) => {
     const input = {
       items: {
-        amazonCartItemsInput: [{ productId: product.id, quantity: 1 }],
-        shopifyCartItemsInput: [{ variantId: product.id, quantity: 1 }],
+        amazonCartItemsInput: [],
+        shopifyCartItemsInput: [],
       },
     };
 
-    if (product.marketplace === "AMAZON") {
+    const { marketplace } = await fetchProduct(product.id);
+
+    console.log(marketplace);
+    if (marketplace === "AMAZON") {
       input.items.amazonCartItemsInput = [
         { productId: product.id, quantity: 1 },
       ];
     }
 
-    if (product.marketplace === "SHOPIFY") {
+    if (marketplace === "SHOPIFY") {
       input.items.shopifyCartItemsInput = [
         { variantId: product.id, quantity: 1 },
       ];
     }
 
+    console.log("here");
+    console.log(input);
     if (!cartId) {
-      const { data: createCartData } = await createCart();
+      const { data: createCartData } = await createCart({
+        variables: { input },
+      });
       setCartId(createCartData.createCart.cart.id);
+    } else {
+      await addCartItems({ variables: { input: { ...input, cartId } } });
     }
-
-    addCartItems({ variables: { input: { ...input, cartId } } });
   };
 
   return (

@@ -10,6 +10,8 @@ import LoadingDots from "../components/LoadingDots";
 import axios from "axios";
 import ProductList from "../components/ProductList";
 import { Product } from "../types";
+import { gql, useQuery } from "@apollo/client";
+import client from "../lib/apolloClient";
 
 const Home: NextPage = () => {
   const [loading, setLoading] = useState<boolean>(false);

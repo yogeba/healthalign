@@ -1,13 +1,13 @@
 import type { AppProps } from "next/app";
 import "../styles/globals.css";
 import { AnimatePresence } from "framer-motion";
-import client from "./api/client";
+import apolloClient from "../lib/apolloClient";
 import { ApolloProvider } from "@apollo/client";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <AnimatePresence mode="wait">
-      <ApolloProvider client={client}>
+      <ApolloProvider client={apolloClient}>
         <Component {...pageProps} />
       </ApolloProvider>
     </AnimatePresence>
