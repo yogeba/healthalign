@@ -9,7 +9,7 @@ const CartPage: React.FC = () => {
   return (
     <div>
       <h1>Your Cart</h1>
-      {cartId && <Cart cartId={cartId as string} />}
+      {cartId && <Cart cartId={"fG4A2LgMkVNqZyCbFVTd"} />}
     </div>
   );
 };
