@@ -13,11 +13,11 @@
     }
 }
 
-button {
+button.animated {
     transition: all 0.3s ease;
 }
 
-button:hover {
+button.animated:hover {
     background-color: #333;
     transform: translateY(-2px);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -35,4 +35,27 @@ button:hover {
 .scrollbar-thin::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.3);
     border-radius: 40px;
+}
+
+/* font */
+
+@font-face {
+    font-family: 'BarlowSemiCondensed';
+    src: url('/fonts/BarlowSemiCondensed.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('/fonts/Poppins.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }

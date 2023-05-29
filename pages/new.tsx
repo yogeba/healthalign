@@ -5,7 +5,7 @@ import HomePage from "../components/home";
 
 const Home: NextPage = () => {
   return (
-    <div className="mx-5 lg:mx-auto lg:container">
+    <div className="mx-auto">
       <Head>
         <title>Health Align</title>
         <link rel="icon" href="/favicon.ico" />

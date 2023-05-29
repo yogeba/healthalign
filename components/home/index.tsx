@@ -1,145 +1,118 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
+import CommonHeader from "../common/Header";
+import LeftSideBar from "./LeftSideBar";
+import RightSideBar from "./RightSideBar";
+import { motion } from "framer-motion";
 import Image from "next/image";
 
-import { Toaster, toast } from "react-hot-toast";
-import { motion } from "framer-motion";
-import Body from "./Body";
-import Link from "next/link";
-
-const HomePage = () => {
+function HomePage() {
   const [generatedBios, setGeneratedBios] = useState<string>("");
-  const contentRef = useRef<null | HTMLDivElement>(null);
+  const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(true);
 
-  const fadeInVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.5 } },
+  const toggleDivVisibility = () => {
+    setIsSidebarVisible((prevVisible) => !prevVisible);
   };
 
+  const leftSidebarAnimation = {
+    hidden: {
+      translateX: "-100%",
+      opacity: 0,
+      width: 0,
+      zIndex: 0,
+    },
+    visible: {
+      translateX: 0,
+      opacity: 1,
+      width: "100%",
+      zIndex: 1,
+    },
+  };
   return (
     <div className="relative w-full h-screen">
       <div className="absolute w-48 h-48 bg-orange-100 rounded-full opacity-50 -bottom-2- left-36 mix-blend-multiply fliter blur-xl animate-blob animation-delay-4000"></div>
-      <div className="absolute bg-purple-200 rounded-full opacity-50 bottom-16 left-1/3 w-80 h-80 mix-blend-multiply fliter blur-xl animate-blob"></div>
+      <div className="absolute bg-purple-200 rounded-full opacity-50 bottom-20 left-1/3 w-80 h-80 mix-blend-multiply fliter blur-xl animate-blob"></div>
       <div className="absolute bg-green-100 rounded-full opacity-50 right-10 top-[20%] w-72 h-72 mix-blend-multiply fliter blur-xl animate-blob animation-delay-2000"></div>
-      <div className="flex h-full">
-        {/* body page */}
-        <div className="w-full sm:w-1/2 xl:w-[36%] h-full border-r border-[#00000038] ">
-          <Body setGeneratedBios={setGeneratedBios} />
+      <div className="flex flex-col w-full h-full">
+        <div className="">
+          <CommonHeader />
         </div>
-
-        {/* result page */}
-        <div className="flex flex-col flex-grow sm:w-1/2 xl:w-auto ">
-          <div
-            className={`flex border-b py-5 items-center border-[#00000038] ${
-              generatedBios.length > 0 ? "justify-between" : "justify-end"
-            }`}
-          >
-            {generatedBios.length > 0 && (
-              <div
-                className="cursor-pointer"
-                onClick={() => setGeneratedBios("")}
+        <div className="h-full mx-7 md:mx-14 lg:mx-auto lg:container">
+          <div className="flex flex-col items-center w-full h-full gap-10 lg:gap-0 lg:flex-row">
+            {/* leftSidebar */}
+            <motion.div
+              className="lg:border-r relative lg:shadow-[1px_6px_10px_0px_#00000033] flex h-full lg:max-w-[500px]"
+              variants={leftSidebarAnimation}
+              initial={isSidebarVisible ? "visible" : "hidden"}
+              animate={isSidebarVisible ? "visible" : "hidden"}
+              transition={{ duration: 0.4 }}
+            >
+              <LeftSideBar setGeneratedBios={setGeneratedBios} />
+            </motion.div>
+            <div className="relative flex items-center justify-center w-full h-full">
+              <button
+                onClick={toggleDivVisibility}
+                className="absolute hidden lg:block left-0 z-10 w-8 h-10 bg-[#4DAF00] text-white rounded-r-full cursor-pointer top-1/2"
               >
-                <Image
-                  alt="moetar"
-                  src="/images/icon/back-icon.svg"
-                  width={15}
-                  height={15}
-                  className="cursor-pointer mx-7 hover:animate-pulse"
-                />
-              </div>
-            )}
-            <div className="flex items-start justify-end px-[30px]">
-              <div className="border flex border-[#5F5F5F] rounded-md">
-                <div className="px-[10px] py-3 border-r border-[#5F5F5F]">
+                {isSidebarVisible ? (
+                  <Image
+                    alt="back arrow"
+                    src="/images/icon/right-arrow.svg"
+                    width={25}
+                    height={25}
+                    className="ml-0.5 rotate-180"
+                  />
+                ) : (
+                  <Image
+                    alt="back arrow"
+                    src="/images/icon/right-arrow.svg"
+                    width={25}
+                    height={25}
+                    className="ml-0.5 "
+                  />
+                )}
+              </button>
+              <RightSideBar
+                isLeftSideBarVisible={isSidebarVisible}
+                generatedBios={generatedBios}
+              />
+              {!isSidebarVisible && (
+                <motion.div
+                  initial={{ x: -100, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ duration: 1 }}
+                  className="absolute top-0 left-0 flex items-center h-full -z-10"
+                >
                   <Image
                     alt="moetar"
-                    src="/images/icon/users-icon.svg"
-                    width={15}
-                    height={15}
-                    className="cursor-pointer"
+                    src="/images/left-blob.png"
+                    width={1257}
+                    height={707}
+                    className="w-auto h-auto"
                   />
-                </div>
-                <Link
-                  href="/about"
-                  className="capitalize cursor-pointer text-[10px] font-semibold text-[#5F5F5F] py-3 px-[13px]"
+                </motion.div>
+              )}
+              {!isSidebarVisible && (
+                <motion.div
+                  initial={{ x: 100, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ duration: 1 }}
+                  className="absolute top-0 right-0 flex items-center h-full -z-10"
                 >
-                  About Us
-                </Link>
-              </div>
+                  <Image
+                    alt="moetar"
+                    src="/images/right-blob.png"
+                    width={1257}
+                    height={707}
+                    className="w-auto h-auto"
+                  />
+                </motion.div>
+              )}
             </div>
           </div>
-
-          {/* result image & decroiption */}
-          {!(generatedBios.length > 0) ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 2 }}
-              className="flex items-center justify-center w-full h-full "
-            >
-              <Image
-                alt="moetar"
-                src="/images/image/fotor-poster.png"
-                width={1024}
-                height={707}
-                className="max-w-[500px] xl:max-w-[700px] 2xl:max-w-5xl"
-              />
-            </motion.div>
-          ) : (
-            <div className="max-h-[1000px] overflow-auto scrollbar-thin">
-              {generatedBios && (
-                <div>
-                  <motion.div
-                    className="flex flex-col items-center justify-center gap-10 py-12 mx-12 lex 2xl:mx-0"
-                    initial="hidden"
-                    animate="visible"
-                    variants={fadeInVariants}
-                  >
-                    {generatedBios
-                      .split("\n")
-                      .reverse()
-                      .map((generatedBio, index) => {
-                        if (generatedBio.trim() === "") return null;
-                        return (
-                          <div
-                            ref={contentRef}
-                            className="border w-[855px] h-[200px] border-[#00000059] rounded-[28px] py-2 max-w-5xl px-12 flex items-center gap-10 justify-between"
-                            onClick={() => {
-                              navigator.clipboard.writeText(generatedBio);
-                              toast("Bio copied to clipboard", {
-                                icon: "✂️",
-                              });
-                            }}
-                            key={index}
-                          >
-                            <p className="text-base font-normal leading-6 text-[#0000008F] text-justify">
-                              {generatedBio.replace(/^\d+\.\s*/, "")}
-                            </p>
-                            <div className="flex-shrink-0">
-                              <Image
-                                alt="moetar"
-                                src="/images/image/cactus flower-pana 1.png"
-                                width={184}
-                                height={184}
-                                className="h-[184px] w-[184px]"
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
-                  </motion.div>
-                </div>
-              )}
-              <Toaster
-                position="top-center"
-                reverseOrder={false}
-                toastOptions={{ duration: 2000 }}
-              />
-            </div>
-          )}
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default HomePage;

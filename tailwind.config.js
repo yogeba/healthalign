@@ -13,6 +13,7 @@ module.exports = {
   ],
   theme: {
     screens: {
+      xs: "340px",
       sm: "640px",
       md: "768px",
       lg: "1024px",
@@ -54,6 +55,11 @@ module.exports = {
         "text-color": "hsl(var(--hue), 4%, 75%)",
         "body-color": "hsl(var(--hue), 8%, 12%)",
         "container-color": "hsl(var(--hue), 8%, 16%)",
+      },
+      fontFamily: {
+        BarlowSemiCondensed: ['BarlowSemiCondensed', 'sans-serif'],
+        Inter: ['Inter', 'sans-serif'],
+        Poppins: ['Poppins', 'sans-serif'],
       },
     },
   },

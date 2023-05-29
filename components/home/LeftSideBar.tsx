@@ -1,15 +1,13 @@
 import React, { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-
-import LoadingDots from "../LoadingDots";
 import { motion } from "framer-motion";
+import Image from "next/image";
+import LoadingDots from "../LoadingDots";
 
 interface BodyProps {
   setGeneratedBios: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const Body: React.FC<BodyProps> = ({ setGeneratedBios }) => {
+const LeftSideBar: React.FC<BodyProps> = ({ setGeneratedBios }) => {
   const [searchItem, setSearchItem] = useState<string | null>("");
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -34,7 +32,6 @@ const Body: React.FC<BodyProps> = ({ setGeneratedBios }) => {
       generateBio(e);
     }
   };
-
   const generateBio = async (e: any) => {
     e.preventDefault();
     setGeneratedBios("");
@@ -74,29 +71,15 @@ const Body: React.FC<BodyProps> = ({ setGeneratedBios }) => {
 
     setLoading(false);
   };
-
   return (
-    <div className="flex flex-col h-full">
-      <div className="px-12 pt-14">
-        <Link href="/" className="flex items-center gap-3">
-          <Image
-            alt="moetar"
-            src="/images/icon/mortar-icon.svg"
-            width={25}
-            height={25}
-          />
-          <h1 className="tracking-tight capitalize font-bold text-sm text-[#4E4E4E]">
-            Health Align
-          </h1>
-        </Link>
-      </div>
+    <div className="flex items-center justify-center">
       <div className="flex items-center justify-center w-full h-full">
-        <div className="flex flex-col gap-5 px-12">
+        <div className="flex flex-col gap-5 xs:px-2 sm:px-12">
           <motion.h2
-            initial={{ y: -100, opacity: 0 }}
+            initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1 }}
-            className="text-[44px] leading-[53px] font-semibold text-start"
+            className="text-[44px] leading-[53px] text-center font-semibold font-BarlowSemiCondensed"
           >
             Discover Your Optimal <span className="text-[#4DAF00]">Health</span>{" "}
             Needs
@@ -105,7 +88,7 @@ const Body: React.FC<BodyProps> = ({ setGeneratedBios }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
-            className="text-base text-[#0000007D] font-normal max-w-[351px]"
+            className="text-base text-center font-Inter text-[#0000007D] font-normal lg:max-w-[351px]"
           >
             Plant Based Nature's Secrets for a Healthier, Happier Life.
           </motion.p>
@@ -119,7 +102,7 @@ const Body: React.FC<BodyProps> = ({ setGeneratedBios }) => {
               <button className="flex items-center justify-center flex-shrink-0 w-5 h-5 text-xs font-semibold text-white bg-black rounded-full ">
                 1
               </button>
-              <p className="text-xs font-bold">
+              <p className="text-xs font-bold font-Inter">
                 Search a Health Condition{" "}
                 <span className="text-xs font-normal">
                   (or goal or desired outcome)
@@ -127,15 +110,41 @@ const Body: React.FC<BodyProps> = ({ setGeneratedBios }) => {
                 .
               </p>
             </div>
-            <textarea
-              value={searchItem ?? ""}
-              onChange={(e) => setSearchItem(e.target.value)}
-              rows={6}
-              className="w-full my-5 border-gray-300 shadow-sm resize-none rounded-2xl focus:border-black focus:ring-black scrollbar-thin"
-              placeholder={
-                "Enter a Health Topic, e.g Diabetes, Depression, or heart Disease..."
-              }
-            />
+            <div className="relative">
+              <textarea
+                value={searchItem ?? ""}
+                onChange={(e) => setSearchItem(e.target.value)}
+                rows={6}
+                className="w-full my-5 border-gray-300 shadow-sm resize-none rounded-2xl focus:border-black focus:ring-black scrollbar-thin"
+                placeholder={
+                  "Enter a Health Topic, e.g Diabetes, Depression, or heart Disease..."
+                }
+              />
+              <div className="absolute w-full bottom-10 ">
+                <div className="flex items-center justify-end gap-3 mx-4">
+                  <label htmlFor="documentData" className="cursor-pointer">
+                    <Image
+                      alt="moetar"
+                      src="/images/icon/attachment.svg"
+                      width={15}
+                      height={15}
+                      className="cursor-pointer "
+                    />
+                    <input className="hidden" type="file" id="documentData" />
+                  </label>
+
+                  <button>
+                    <Image
+                      alt="moetar"
+                      src="/images/icon/mic-icon.svg"
+                      width={15}
+                      height={15}
+                      className="cursor-pointer"
+                    />
+                  </button>
+                </div>
+              </div>
+            </div>
           </motion.div>
           {!loading && (
             <motion.button
@@ -143,7 +152,7 @@ const Body: React.FC<BodyProps> = ({ setGeneratedBios }) => {
               animate={{ opacity: 1 }}
               transition={{ duration: 1 }}
               onClick={(e) => handleSaerchButtonClick(e)}
-              className="rounded-2xl flex gap-2 items-center justify-center bg-[#4DAF00] text-xs font-semibold leading-8 text-white py-3"
+              className="rounded-2xl font-Poppins flex gap-2 items-center justify-center bg-[#4DAF00] text-xs font-semibold leading-8 text-white py-3 animated"
             >
               Generate Awnser
               <Image
@@ -151,13 +160,13 @@ const Body: React.FC<BodyProps> = ({ setGeneratedBios }) => {
                 src="/images/icon/right-arrow.svg"
                 width={10}
                 height={10}
-                className="mt-1"
+                className=""
               />
             </motion.button>
           )}
           {loading && (
             <button
-              className="rounded-2xl h-[54px] flex gap-2 items-center justify-center bg-[#4DAF00] text-xs font-semibold leading-8 text-white py-3"
+              className="rounded-2xl animated h-[54px] flex gap-2 items-center justify-center bg-[#4DAF00] text-xs font-semibold leading-8 text-white py-3"
               disabled
             >
               <LoadingDots color="white" style="large" />
@@ -165,29 +174,8 @@ const Body: React.FC<BodyProps> = ({ setGeneratedBios }) => {
           )}
         </div>
       </div>
-
-      {/* footer part */}
-      <div className="py-[30px] flex items-center justify-center gap-2 text-center font-bold text-sm  md:text-base border-t border-[#00000038]">
-        Powered by{" "}
-        <a
-          href="https://openai.com/blog/chatgpt"
-          target="_blank"
-          rel="noreferrer"
-          className="font-normal transition hover:underline"
-        >
-          ChatGPT{" "}
-        </a>
-        |
-        <Link legacyBehavior href="/">
-          <a className="font-normal transition hover:underline">Home</a>
-        </Link>
-        |
-        <Link legacyBehavior href="/about">
-          <a className="font-normal transition hover:underline">About</a>
-        </Link>
-      </div>
     </div>
   );
 };
 
-export default Body;
+export default LeftSideBar;
