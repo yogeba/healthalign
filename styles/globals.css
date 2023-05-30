@@ -59,3 +59,10 @@ button.animated:hover {
     font-weight: normal;
     font-style: normal;
 }
+
+@font-face {
+    font-family: 'InaiMathi';
+    src: url('/fonts/Poppins.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}

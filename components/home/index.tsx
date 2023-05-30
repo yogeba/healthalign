@@ -8,6 +8,7 @@ import Image from "next/image";
 function HomePage() {
   const [generatedBios, setGeneratedBios] = useState<string>("");
   const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(true);
+  const [searchValue, setSearchValue] = useState<string | null>("");
 
   const toggleDivVisibility = () => {
     setIsSidebarVisible((prevVisible) => !prevVisible);
@@ -29,9 +30,9 @@ function HomePage() {
   };
   return (
     <div className="relative w-full h-screen">
-      <div className="absolute w-48 h-48 bg-orange-100 rounded-full opacity-50 -bottom-2- left-36 mix-blend-multiply fliter blur-xl animate-blob animation-delay-4000"></div>
+      {/* <div className="absolute w-48 h-48 bg-orange-100 rounded-full opacity-50 -bottom-2- left-36 mix-blend-multiply fliter blur-xl animate-blob animation-delay-4000"></div>
       <div className="absolute bg-purple-200 rounded-full opacity-50 bottom-20 left-1/3 w-80 h-80 mix-blend-multiply fliter blur-xl animate-blob"></div>
-      <div className="absolute bg-green-100 rounded-full opacity-50 right-10 top-[20%] w-72 h-72 mix-blend-multiply fliter blur-xl animate-blob animation-delay-2000"></div>
+      <div className="absolute bg-green-100 rounded-full opacity-50 right-10 top-[20%] w-72 h-72 mix-blend-multiply fliter blur-xl animate-blob animation-delay-2000"></div> */}
       <div className="flex flex-col w-full h-full">
         <div className="">
           <CommonHeader />
@@ -46,7 +47,10 @@ function HomePage() {
               animate={isSidebarVisible ? "visible" : "hidden"}
               transition={{ duration: 0.4 }}
             >
-              <LeftSideBar setGeneratedBios={setGeneratedBios} />
+              <LeftSideBar
+                setSearchValue={setSearchValue}
+                setGeneratedBios={setGeneratedBios}
+              />
             </motion.div>
             <div className="relative flex items-center justify-center w-full h-full">
               <button
@@ -74,6 +78,7 @@ function HomePage() {
               <RightSideBar
                 isLeftSideBarVisible={isSidebarVisible}
                 generatedBios={generatedBios}
+                searchValue={searchValue}
               />
               {!isSidebarVisible && (
                 <motion.div

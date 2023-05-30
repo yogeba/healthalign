@@ -60,6 +60,7 @@ module.exports = {
         BarlowSemiCondensed: ['BarlowSemiCondensed', 'sans-serif'],
         Inter: ['Inter', 'sans-serif'],
         Poppins: ['Poppins', 'sans-serif'],
+        InaiMathi: ['InaiMathi', 'sans-serif'],
       },
     },
   },

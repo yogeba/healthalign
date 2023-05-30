@@ -5,9 +5,13 @@ import LoadingDots from "../LoadingDots";
 
 interface BodyProps {
   setGeneratedBios: React.Dispatch<React.SetStateAction<string>>;
+  setSearchValue: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-const LeftSideBar: React.FC<BodyProps> = ({ setGeneratedBios }) => {
+const LeftSideBar: React.FC<BodyProps> = ({
+  setGeneratedBios,
+  setSearchValue,
+}) => {
   const [searchItem, setSearchItem] = useState<string | null>("");
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -27,9 +31,15 @@ const LeftSideBar: React.FC<BodyProps> = ({ setGeneratedBios }) => {
   }`;
 
   const handleSaerchButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setSearchValue(searchItem);
     setSearchItem("");
     if (typeof searchItem === "string" && searchItem.length > 0) {
       generateBio(e);
+    } else {
+      setSearchValue("This is test propmpt without APi");
+      setGeneratedBios(
+        "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dicta deleniti, accusantium sapiente repudiandae, nam magni voluptate alias dolore culpa omnis cupiditate reiciendis beatae. Tempore labore dolorem repudiandae architecto placeat odit!"
+      );
     }
   };
   const generateBio = async (e: any) => {

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Toaster, toast } from "react-hot-toast";
 import Image from "next/image";
 import useReadMore from "../hooks/ReadMore";
+import { useRouter } from "next/router";
 
 interface ResultCardProps {
   generatedBio: string;
@@ -11,12 +12,17 @@ interface ResultCardProps {
 const initialWordCount = 200;
 
 const ResultCard: React.FC<ResultCardProps> = ({ generatedBio }) => {
+  const router = useRouter();
   const { limit, isExpanded, handleReadMore, handleReadLess } =
     useReadMore(initialWordCount);
-  const handlePlayButtonCLick = () => {};
+
+  const handlePlayButtonCLick = () => {
+    router.push("new/products");
+  };
+
   return (
     <motion.div
-      className="border relative mx-5 md:mx-[50px] h-[200px] border-[#00000059] rounded-[28px] py-2 max-w-5xl lg:w-[900px] px-12 flex items-center gap-10 justify-between"
+      className="relative mx-5 md:mx-[50px] h-[200px] rounded-[28px] py-2 max-w-5xl lg:w-[900px] px-12 flex items-center gap-10 justify-between shadow-[0px_0px_7px_0px_#00000029]"
       // variants={zoomOutVariants}
       initial="hidden"
       animate="visible"
@@ -31,7 +37,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ generatedBio }) => {
               icon: "✂️",
             });
           }}
-          className="text-base inline cursor-copy font-normal leading-6 text-[#0000008F] text-justify"
+          className="text-sm font-Poppins inline cursor-copy font-normal leading-6 text-[#0000008F] text-justify"
         >
           {isExpanded
             ? generatedBio?.replace(/^\d+\.\s*/, "")
