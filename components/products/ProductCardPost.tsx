@@ -1,27 +1,58 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import useReadMore from "../hooks/ReadMore";
 import { useRouter } from "next/router";
+import { Product } from "types";
+import { MARKETPLACE } from "constants/marketplace";
+import { fetchProduct } from "lib/products";
 
 const initialWordCount = 252;
 
-function ProductCardPost() {
+interface ProductCardPostProps {
+  title: string;
+  image: string;
+  availability: string;
+  description: string;
+  data: any;
+}
+const ProductCardPost: React.FC<ProductCardPostProps> = ({
+  title,
+  image,
+  availability,
+  description,
+  data,
+}) => {
   const router = useRouter();
-  const { limit, isExpanded, handleReadMore, handleReadLess } =
-    useReadMore(initialWordCount);
+
   const [isHovered, setisHovered] = useState<Boolean>(false);
   const zooInVariants = {
     hidden: { scale: 0, y: 400, opacity: 0 },
     visible: { scale: 1, y: 0, opacity: 1 },
   };
 
-  const textData =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed doeiusmod tempor incididunt ut labore et dolore magna aliqua. Utenim ad minim veniam, quis nost rud exercitation ullamco laboris.";
+  const getProductMarketplace = (product: Product) => {
+    return product?.request_domain === "amazon.com"
+      ? MARKETPLACE.AMAZON
+      : MARKETPLACE.SHOPIFY;
+  };
 
-  const handleNextClick = () => {
-    console.log("clicked next");
-    router.push("/new/product");
+  const getProductUrl = (product: Product) => {
+    console.log("TODO", product?.marketplace);
+    return getProductMarketplace(product) === MARKETPLACE.SHOPIFY
+      ? product.store_canonical_url + product.url
+      : product?.url;
+  };
+
+  const handleNextClick = async () => {
+    console.log("clicked next", data.id);
+    const id = data.id;
+    const type = getProductMarketplace(data);
+
+    // Redirect to "/products" with parameters using the Router
+    router.push({
+      pathname: "/new/product",
+      query: { id, type },
+    });
   };
 
   return (
@@ -35,27 +66,30 @@ function ProductCardPost() {
       onMouseEnter={() => setisHovered(true)}
       onMouseLeave={() => setisHovered(false)}
     >
-      <div className="flex  h-full w-full gap-4">
-        <div className="h-full flex-shrink-0">
+      <div className="flex w-full h-full gap-4">
+        <div className="flex-shrink-0 h-full">
           <Image
             alt="moetar"
-            src="/images/product-image.png"
+            src={image}
+            // src={image}
             width={152}
             height={152}
             className="h-[152px] w-[152px]"
           />
         </div>
-        <div className="flex-grow relative flex justify-start">
+        <div className="relative flex justify-start flex-grow">
           <div className="flex flex-col gap-[9px]">
             <p className="text-xs font-bold font-InaiMathi text-[#00A02C]">
-              None
+              {/* None */}
+              {/* {availability ?? "None"} */}
             </p>
-            <h2 className="text-[21px] leading-[26px] text-[#595959] font-InaiMathi max-w-[450px] font-bold">
-              Nature Bounties D-Complex With Folic Acid Plus Vitamins C
+            <h2 className="text-sm md:text-base lg:text-[21px] leading-[26px] text-[#595959] font-InaiMathi  md:max-w-[80%] xl:max-w-[520px] font-bold">
+              {/* Nature Bounties D-Complex With Folic Acid Plus Vitamins C */}
+              {title ?? ""}
             </h2>
-            <div className="text-sm font-normal font-InaiMathi text-[#888888] max-w-[580px]">
-              {isExpanded ? textData : textData.slice(0, limit)}
-              {textData.length > initialWordCount &&
+            {/* <div className="text-sm font-normal font-InaiMathi text-[#888888] max-w-[580px]">
+              {isExpanded ? description : description.slice(0, limit)}
+              {description.length > initialWordCount &&
                 (isExpanded ? (
                   <button onClick={handleReadLess}>
                     <span className="inline-block px-2">Read Less</span>
@@ -65,9 +99,9 @@ function ProductCardPost() {
                     ...... <span className="inline-block px-2">Read More</span>
                   </button>
                 ))}
-            </div>
+            </div> */}
             {/* product button */}
-            <div className="product absolute right-4 h-full flex items-center">
+            <div className="absolute flex items-center h-full product right-4">
               <div
                 className={`h-[52px] w-[52px] rounded-full transition-all duration-700  p-1.5 bg-[#00A02C] `}
               >
@@ -106,6 +140,6 @@ function ProductCardPost() {
       </div>
     </motion.div>
   );
-}
+};
 
 export default ProductCardPost;

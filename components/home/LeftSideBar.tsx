@@ -35,11 +35,6 @@ const LeftSideBar: React.FC<BodyProps> = ({
     setSearchItem("");
     if (typeof searchItem === "string" && searchItem.length > 0) {
       generateBio(e);
-    } else {
-      setSearchValue("This is test propmpt without APi");
-      setGeneratedBios(
-        "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dicta deleniti, accusantium sapiente repudiandae, nam magni voluptate alias dolore culpa omnis cupiditate reiciendis beatae. Tempore labore dolorem repudiandae architecto placeat odit!"
-      );
     }
   };
   const generateBio = async (e: any) => {
@@ -74,7 +69,6 @@ const LeftSideBar: React.FC<BodyProps> = ({
       done = doneReading;
       const chunkValue = decoder.decode(value);
       setGeneratedBios((prev) => {
-        console.log(prev + chunkValue);
         return prev + chunkValue;
       });
     }

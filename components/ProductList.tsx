@@ -68,14 +68,14 @@ const ProductList: React.FC<ProductListProps> = ({ products = [] }) => {
   }, []);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {products.map((product) => (
         <div
           key={product.id}
-          className="product-card bg-white shadow-md rounded p-4 flex flex-col"
+          className="flex flex-col p-4 bg-white rounded shadow-md product-card"
         >
           <img
-            className="w-full h-64 object-cover mb-4 rounded"
+            className="object-cover w-full h-64 mb-4 rounded"
             src={product.image_url}
             alt={product.title}
           />
@@ -91,16 +91,16 @@ const ProductList: React.FC<ProductListProps> = ({ products = [] }) => {
                     encodeURIComponent(getProductUrl(product))
                 )
               }
-              className="text-xl font-semibold mb-2 flex-1 truncate"
+              className="flex-1 mb-2 text-xl font-semibold truncate"
             >
               {product.title}
             </button>
-            {/* <p className="text-gray-700 mb-4">{product.description}</p> */}
-            <p className="text-lg font-bold mb-4 flex-1">
+            {/* <p className="mb-4 text-gray-700">{product.description}</p> */}
+            <p className="flex-1 mb-4 text-lg font-bold">
               Price: ${product.formatted_price}
             </p>
             <button
-              className="bg-black rounded-xl text-white font-medium px-4 py-2 mt-auto hover:bg-black/80 w-full"
+              className="w-full px-4 py-2 mt-auto font-medium text-white bg-black rounded-xl hover:bg-black/80"
               onClick={() => handleBuyNow(product)}
             >
               Add to Cart

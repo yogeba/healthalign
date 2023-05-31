@@ -1,14 +1,59 @@
-import React, { useState } from "react";
-import CommonHeader from "../common/Header";
-import LeftSideBar from "./LeftSideBar";
-import RightSideBar from "./RightSideBar";
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
+
+import CommonHeader from "../common/Header";
+import RightSideBar from "./RightSideBar";
+import LeftSideBar from "./LeftSideBar";
+import { motion } from "framer-motion";
 
 function HomePage() {
   const [generatedBios, setGeneratedBios] = useState<string>("");
   const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(true);
   const [searchValue, setSearchValue] = useState<string | null>("");
+  const [allSupplementNames, setAllSupplementNames] = useState<string[]>([]);
+
+  const extractSupplementNames = (response: string) => {
+    const lines = response.split("\n");
+    const question10Supplements = lines.find((line) => line.startsWith("10."));
+    const question11Supplements = lines.find((line) => line.startsWith("11."));
+
+    const supplementNames = question10Supplements
+      ? question10Supplements
+          .replace(/^10\.\s*/, "")
+          .replace(/^.*include /, "")
+          .split(", ")
+          .map((name) => name.replace("and ", ""))
+          .map((name) => name.replace("and", ""))
+          .map((name) => name.replace(".", ""))
+      : [];
+
+    const plantBasedSupplementNames = question11Supplements
+      ? question11Supplements
+          .replace(/^11\.\s*/, "")
+          .replace(/^.*include /, "")
+          .split(", ")
+          .map((name) => name.replace("and ", ""))
+          .map((name) => name.replace("and", ""))
+          .map((name) => name.replace(".", ""))
+      : [];
+
+    setAllSupplementNames(supplementNames);
+
+    return { supplementNames, plantBasedSupplementNames };
+  };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(
+        "supplementNames",
+        JSON.stringify(allSupplementNames)
+      );
+    }
+  }, [allSupplementNames]);
+
+  useEffect(() => {
+    extractSupplementNames(generatedBios);
+  }, [generatedBios]);
 
   const toggleDivVisibility = () => {
     setIsSidebarVisible((prevVisible) => !prevVisible);
@@ -28,11 +73,12 @@ function HomePage() {
       zIndex: 1,
     },
   };
+
   return (
     <div className="relative w-full h-screen">
-      {/* <div className="absolute w-48 h-48 bg-orange-100 rounded-full opacity-50 -bottom-2- left-36 mix-blend-multiply fliter blur-xl animate-blob animation-delay-4000"></div>
-      <div className="absolute bg-purple-200 rounded-full opacity-50 bottom-20 left-1/3 w-80 h-80 mix-blend-multiply fliter blur-xl animate-blob"></div>
-      <div className="absolute bg-green-100 rounded-full opacity-50 right-10 top-[20%] w-72 h-72 mix-blend-multiply fliter blur-xl animate-blob animation-delay-2000"></div> */}
+      <div className="absolute hidden w-48 h-48 bg-orange-100 rounded-full opacity-50 lg:block -bottom-2- left-36 mix-blend-multiply fliter blur-xl animate-blob animation-delay-4000"></div>
+      <div className="absolute hidden bg-purple-200 rounded-full opacity-50 lg:block bottom-20 left-1/3 w-80 h-80 mix-blend-multiply fliter blur-xl animate-blob"></div>
+      <div className="hidden lg:block absolute bg-green-100 rounded-full opacity-50 right-16 top-[20%] w-72 h-72 mix-blend-multiply fliter blur-xl animate-blob animation-delay-2000"></div>
       <div className="flex flex-col w-full h-full">
         <div className="">
           <CommonHeader />
@@ -79,13 +125,15 @@ function HomePage() {
                 isLeftSideBarVisible={isSidebarVisible}
                 generatedBios={generatedBios}
                 searchValue={searchValue}
+                setGeneratedBios={setGeneratedBios}
+                setSearchValue={setSearchValue}
               />
               {!isSidebarVisible && (
                 <motion.div
                   initial={{ x: -100, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ duration: 1 }}
-                  className="absolute top-0 left-0 flex items-center h-full -z-10"
+                  className="absolute top-0 left-0 items-center hidden h-full lg:flex -z-10"
                 >
                   <Image
                     alt="moetar"
@@ -101,7 +149,7 @@ function HomePage() {
                   initial={{ x: 100, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ duration: 1 }}
-                  className="absolute top-0 right-0 flex items-center h-full -z-10"
+                  className="absolute top-0 right-0 items-center hidden h-full lg:flex -z-10"
                 >
                   <Image
                     alt="moetar"

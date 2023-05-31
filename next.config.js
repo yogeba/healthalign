@@ -15,4 +15,7 @@ module.exports = {
       },
     ];
   },
+  images: {
+    domains: ['m.media-amazon.com', 'cdn.shopify.com'],
+  },
 };

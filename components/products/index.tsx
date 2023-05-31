@@ -4,10 +4,19 @@ import { AnimatePresence, motion } from "framer-motion";
 import ProductCardPost from "./ProductCardPost";
 import Image from "next/image";
 
-function ProductsPage() {
+interface ProductPageProps {
+  productsData: any[];
+  supplymentData: string[];
+}
+
+const ProductsPage: React.FC<ProductPageProps> = ({
+  productsData,
+  supplymentData,
+}) => {
   const [isOpen, setIsOpen] = useState<Boolean>(false);
-  const [selectedOption, setSelectedOption] = useState<string>("Folic Acid");
-  const options = ["Folic Acid", "Vitamin C", "Vitamin D"];
+  const [selectedOption, setSelectedOption] = useState<string>(
+    supplymentData[0] ?? "all Products"
+  );
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleOptionClick = (option: string) => {
@@ -64,10 +73,10 @@ function ProductsPage() {
                     </div>
                     <div
                       ref={containerRef}
-                      className="flex items-center h-full font-bold flex-grow"
+                      className="flex items-center flex-grow h-full font-bold"
                       onClick={() => setIsOpen(!isOpen)}
                     >
-                      <div className=" border-white h-full flex justify-center items-center">
+                      <div className="flex items-center justify-center h-full border-white ">
                         <p className="capitalize cursor-pointer text-[8px] mx-2.5 font-bold text-white font-InaiMathi">
                           {selectedOption}
                         </p>
@@ -93,11 +102,11 @@ function ProductsPage() {
                           transition={{ duration: 0.2 }}
                           className="absolute top-10 right-0 w-[172px] bg-white  z-10 shadow-[0px_0px_8px_0px_#00000040] rounded-b-lg border border-[#0000001F] overflow-hidden"
                         >
-                          {options.map((option) => (
+                          {supplymentData.map((option) => (
                             <motion.li
                               key={option}
                               onClick={() => handleOptionClick(option)}
-                              className="px-4 py-2  cursor-pointer"
+                              className="px-4 py-2 cursor-pointer"
                               whileHover={{ backgroundColor: "#E5E5E5" }}
                             >
                               {option}
@@ -109,9 +118,33 @@ function ProductsPage() {
                   </div>
                 </motion.div>
                 <div className="flex relative flex-col gap-10 py-1.5 max-h-[74vh] overflow-auto scrollbar-thin">
-                  <ProductCardPost />
-                  <ProductCardPost />
-                  <ProductCardPost />
+                  {productsData.length > 0 &&
+                    productsData.map((item, index) => {
+                      const { category, available, image_url, title } = item;
+                      let cleanedImageUrl = image_url;
+                      if (image_url.startsWith("//")) {
+                        cleanedImageUrl = cleanedImageUrl.replace(/^\/\//, "");
+                      }
+                      if (!cleanedImageUrl.startsWith("https://")) {
+                        cleanedImageUrl = `https://${cleanedImageUrl}`;
+                      } else {
+                        cleanedImageUrl = cleanedImageUrl;
+                      }
+                      if (available) {
+                        return (
+                          <ProductCardPost
+                            key={index}
+                            availability={category}
+                            title={title}
+                            description={
+                              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed doeiusmod tempor incididunt ut labore et dolore magna aliqua. Utenim ad minim veniam, quis nost rud exercitation ullamco laboris."
+                            }
+                            data={item}
+                            image={cleanedImageUrl}
+                          />
+                        );
+                      }
+                    })}
                 </div>
               </div>
             </AnimatePresence>
@@ -120,7 +153,7 @@ function ProductsPage() {
               initial={{ x: -100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 1 }}
-              className="absolute top-0 left-0 flex items-center h-full -z-10"
+              className="absolute top-0 left-0 items-center hidden h-full lg:flex -z-10"
             >
               <Image
                 alt="moetar"
@@ -135,7 +168,7 @@ function ProductsPage() {
               initial={{ x: 100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 1 }}
-              className="absolute top-0 right-0 flex items-center h-full -z-10"
+              className="absolute top-0 right-0 items-center hidden h-full lg:flex -z-10"
             >
               <Image
                 alt="moetar"
@@ -150,6 +183,6 @@ function ProductsPage() {
       </div>
     </div>
   );
-}
+};
 
 export default ProductsPage;
