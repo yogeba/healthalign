@@ -19,6 +19,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
   setSearchValue,
 }) => {
   const [updatedSearchValue, setUpdatedSearchValue] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
   const zoomInVariants = {
     hidden: { scale: 0, y: 400, opacity: 0 },
     visible: { scale: 1, y: 0, opacity: 1 },
