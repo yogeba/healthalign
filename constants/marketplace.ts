@@ -1,0 +1,4 @@
+export enum MARKETPLACE {
+  AMAZON = "AMAZON",
+  SHOPIFY = "SHOPIFY",
+}

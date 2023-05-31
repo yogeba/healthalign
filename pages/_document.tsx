@@ -30,6 +30,7 @@ class MyDocument extends Document {
             name="twitter:image"
             content="https://twitterbio.com/og-image.png"
           />
+          <script src="rye-pay.js" />
         </Head>
         <body>
           <Main />
