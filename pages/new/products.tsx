@@ -7,6 +7,7 @@ interface ProductsProps {
 }
 
 const Products: NextPage<ProductsProps> = ({ products }) => {
+  console.log(products, "products products");
   const [supplymentData, setSupplymentData] = useState<string[]>([]);
   useEffect(() => {
     if (typeof window !== "undefined") {

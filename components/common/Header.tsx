@@ -5,7 +5,8 @@ import React from "react";
 function CommonHeader() {
   return (
     <div className="border-b shadow-[1px_0px_10px_0px_#00000033]">
-      <div className="h-[90px] mx-7 md:mx-14 lg:container lg:mx-auto flex justify-between items-center">
+      {/* <div className="h-[90px] mx-7 md:mx-14 lg:container lg:mx-auto flex justify-between items-center"> */}
+      <div className="h-[90px] mx-7 md:mx-14 flex justify-between items-center">
         <div className="">
           <Link href="/" className="flex items-center gap-3">
             <Image
@@ -42,7 +43,7 @@ function CommonHeader() {
           <Image
             alt="moetar"
             src="/images/user.png"
-            className="flex-shrink-0 w-[35px] h-[35px] cursor-pointer"
+            className="flex-shrink-0 w-[35px] rounded-full h-[35px] cursor-pointer"
             width={35}
             height={35}
           />

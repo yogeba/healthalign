@@ -44,7 +44,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
   const [selectedImage, setselectedImage] = useState<string>(imageData[0]);
 
   const handleProductImageClick = (image: string) => {
-    console.log(image);
     setselectedImage(image);
   };
 
@@ -139,7 +138,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
       <div className="h-full mx-7 md:mx-14 lg:mx-auto lg:container">
         <div className="flex flex-col items-center w-full h-full gap-10 lg:gap-0 lg:flex-row">
           <div className="relative flex items-center justify-center w-full h-full py-4 md:py-10 xl:py-10">
-            <div className="shadow-[0px_0px_7px_0px_#00000029] rounded-[28px] max-w-[900px] h-full  w-full">
+            <div className="shadow-[0px_0px_7px_0px_#00000029] bg-white rounded-[28px] max-w-[900px] h-full  w-full">
               <div className="flex flex-col py-10 md:py-0 md:gap-0 md:flex-row w-full h-full  md:max-h-[410px] border-b border-[#00000017]">
                 {/* upper div */}
                 <motion.div
@@ -156,7 +155,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
                         boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.25)",
                       }}
                       transition={{ duration: 2 }}
-                      className="h-[230px] w-[240px] flex justify-center items-center rounded-full"
+                      className=" h-[180px] w-[180px] md:h-[230px] md:w-[240px] flex justify-center items-center rounded-full"
                     >
                       <Image
                         alt="moetar"
@@ -164,7 +163,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
                         // src={`/images/${selectedImage ?? ""}`}
                         width={214}
                         height={214}
-                        className="rounded-full h-[214px] w-[214px]"
+                        className="rounded-full h-[170px] w-[170px] md:h-[214px] md:w-[214px]"
                       />
                     </motion.div>
                   </div>

@@ -45,13 +45,13 @@ const ProductsPage: React.FC<ProductPageProps> = ({
       <div className="">
         <CommonHeader />
       </div>
-      <div className="h-full mx-7 md:mx-14 lg:mx-auto lg:container">
+      <div className="h-full md:mx-14 lg:mx-auto lg:container">
         <div className="flex flex-col items-center w-full h-full gap-10 lg:gap-0 lg:flex-row">
           <div className="relative flex items-center justify-center w-full h-full">
             <AnimatePresence mode="wait">
               <div
                 key="content"
-                className="flex flex-col items-center justify-center gap-10 py-12 mx-12 lex 2xl:mx-0"
+                className="flex flex-col items-center justify-center gap-10 py-12 mx-4 xs:mx-5 md:mx-2 2xl:mx-0"
               >
                 <motion.div
                   initial={{ y: -50, opacity: 0 }}
@@ -59,9 +59,9 @@ const ProductsPage: React.FC<ProductPageProps> = ({
                   transition={{ duration: 0.5 }}
                   className="w-full relative max-w-[900px]"
                 >
-                  <hr className="border border-[#0000001F]" />
-                  <div className="absolute -top-2.5 w-full flex justify-center">
-                    <p className="inline-block bg-white text-[#4E4E4E] px-5 font-InaiMathi text-base font-bold">
+                  <hr className="sm:border sm:border-[#0000001F]" />
+                  <div className="absolute  -top-2.5 w-full flex sm:justify-center">
+                    <p className="inline-block text-[10px] bg-white text-[#4E4E4E] pt-0.5 sm:pt-0 pr-3 sm:px-5 font-InaiMathi md:text-base font-bold">
                       All Vitamins C Products
                     </p>
                   </div>
@@ -156,7 +156,7 @@ const ProductsPage: React.FC<ProductPageProps> = ({
               className="absolute top-0 left-0 items-center hidden h-full lg:flex -z-10"
             >
               <Image
-                alt="moetar"
+                alt="left"
                 src="/images/left-blob.png"
                 width={1257}
                 height={707}
@@ -171,7 +171,7 @@ const ProductsPage: React.FC<ProductPageProps> = ({
               className="absolute top-0 right-0 items-center hidden h-full lg:flex -z-10"
             >
               <Image
-                alt="moetar"
+                alt="right"
                 src="/images/right-blob.png"
                 width={1257}
                 height={707}

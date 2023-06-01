@@ -6,11 +6,13 @@ import LoadingDots from "../LoadingDots";
 interface BodyProps {
   setGeneratedBios: React.Dispatch<React.SetStateAction<string>>;
   setSearchValue: React.Dispatch<React.SetStateAction<string | null>>;
+  setIsSidebarVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const LeftSideBar: React.FC<BodyProps> = ({
   setGeneratedBios,
   setSearchValue,
+  setIsSidebarVisible,
 }) => {
   const [searchItem, setSearchItem] = useState<string | null>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -35,6 +37,10 @@ const LeftSideBar: React.FC<BodyProps> = ({
     setSearchItem("");
     if (typeof searchItem === "string" && searchItem.length > 0) {
       generateBio(e);
+    } else {
+      setSearchValue("Test data");
+      setGeneratedBios("thi is test data");
+      setIsSidebarVisible(false);
     }
   };
   const generateBio = async (e: any) => {
@@ -83,7 +89,7 @@ const LeftSideBar: React.FC<BodyProps> = ({
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1 }}
-            className="text-[44px] leading-[53px] text-center font-semibold font-BarlowSemiCondensed"
+            className=" text-4xl md:text-[44px] leading-[53px] text-center font-semibold font-BarlowSemiCondensed"
           >
             Discover Your Optimal <span className="text-[#4DAF00]">Health</span>{" "}
             Needs
@@ -92,7 +98,7 @@ const LeftSideBar: React.FC<BodyProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
-            className="text-base text-center font-Inter text-[#0000007D] font-normal lg:max-w-[351px]"
+            className="text-sm  md:text-base text-center font-Inter text-[#0000007D] font-normal lg:max-w-[351px]"
           >
             Plant Based Nature's Secrets for a Healthier, Happier Life.
           </motion.p>
@@ -103,12 +109,12 @@ const LeftSideBar: React.FC<BodyProps> = ({
             className="flex flex-col py-5 mb-2.5"
           >
             <div className="flex gap-2.5 items-center">
-              <button className="flex items-center justify-center flex-shrink-0 w-5 h-5 text-xs font-semibold text-white bg-black rounded-full ">
+              <button className="flex items-center justify-center flex-shrink-0 h-[14px] w-[14px] text-[9px] md:text-xs font-bold md:font-semibold text-white bg-black rounded-full md:w-5 md:h-5 ">
                 1
               </button>
-              <p className="text-xs font-bold font-Inter">
+              <p className="text-[9px] md:text-xs font-bold font-Inter">
                 Search a Health Condition{" "}
-                <span className="text-xs font-normal">
+                <span className="text-[9px] md:text-xs font-normal">
                   (or goal or desired outcome)
                 </span>
                 .

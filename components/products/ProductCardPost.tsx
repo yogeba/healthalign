@@ -57,7 +57,7 @@ const ProductCardPost: React.FC<ProductCardPostProps> = ({
 
   return (
     <motion.div
-      className="relative mx-5 md:mx-[50px] h-[200px] rounded-[28px] py-[24px] max-w-5xl lg:w-[900px] px-8 flex items-center gap-10 cursor-pointer justify-between shadow-[0px_0px_7px_0px_#00000029]"
+      className="relative mx-8 md:mx-[50px] h-[200px] rounded-[28px] py-[24px] max-w-5xl lg:w-[900px] px-8 flex items-center gap-10 cursor-pointer justify-between shadow-[0px_0px_7px_0px_#00000029] bg-white"
       variants={zooInVariants}
       initial="hidden"
       animate="visible"
@@ -74,16 +74,16 @@ const ProductCardPost: React.FC<ProductCardPostProps> = ({
             // src={image}
             width={152}
             height={152}
-            className="h-[152px] w-[152px]"
+            className="h-[60px] w-[60px] md:h-[152px] md:w-[152px]"
           />
         </div>
         <div className="relative flex justify-start flex-grow">
-          <div className="flex flex-col gap-[9px]">
-            <p className="text-xs font-bold font-InaiMathi text-[#00A02C]">
+          <div className="flex flex-col gap-[9px] pr-8 md:pr-0">
+            <p className="text-xs hidden font-bold font-InaiMathi text-[#00A02C]">
               {/* None */}
               {/* {availability ?? "None"} */}
             </p>
-            <h2 className="text-sm md:text-base lg:text-[21px] leading-[26px] text-[#595959] font-InaiMathi  md:max-w-[80%] xl:max-w-[520px] font-bold">
+            <h2 className="text-[10px] line-clamp-4 md:line-clamp-none text-justify md:text-start md:text-sm lg:text-base lg:text-[21px] leading-[16px] md:leading-[26px] text-[#595959] font-InaiMathi  xs:md:max-w-[80%] xl:max-w-[520px] font-bold ">
               {/* Nature Bounties D-Complex With Folic Acid Plus Vitamins C */}
               {title ?? ""}
             </h2>
@@ -101,9 +101,9 @@ const ProductCardPost: React.FC<ProductCardPostProps> = ({
                 ))}
             </div> */}
             {/* product button */}
-            <div className="absolute flex items-center h-full product right-4">
+            <div className="absolute flex items-center h-full -right-4 product md:right-4">
               <div
-                className={`h-[52px] w-[52px] rounded-full transition-all duration-700  p-1.5 bg-[#00A02C] `}
+                className={`h-10 w-10 md:h-[52px] md:w-[52px] rounded-full transition-all duration-700  p-1.5 bg-[#00A02C] `}
               >
                 <div
                   className={`w-full h-full border  rounded-full font-Poppins text-lg font-semibold flex transition-all duration-700 justify-center items-center border-white text-white`}
@@ -114,7 +114,7 @@ const ProductCardPost: React.FC<ProductCardPostProps> = ({
                       src="/images/icon/right-arrow.svg"
                       width={25}
                       height={25}
-                      className="hover:animate-pulse"
+                      className="h-[14px] w-[14px] md:w-[25px] md:h-[25px] hover:animate-pulse "
                     />
                   </button>
                 </div>
@@ -126,12 +126,12 @@ const ProductCardPost: React.FC<ProductCardPostProps> = ({
       </div>
       {/* grade */}
       <div
-        className={`h-[52px] w-[52px] absolute -left-6 rounded-full transition-all duration-700  p-1.5 ${
+        className={`h-10 w-10 md:h-[52px] md:w-[52px] absolute -left-6 rounded-full transition-all duration-700  p-1.5 ${
           isHovered ? "bg-black" : "bg-white shadow-[0px_0px_6px_0px_#00000040]"
         }`}
       >
         <div
-          className={`w-full h-full border  rounded-full font-Poppins text-lg font-semibold  flex transition-all duration-700 justify-center items-center ${
+          className={`w-full h-full border  rounded-full font-Poppins text-[13px] md:text-lg font-semibold  flex transition-all duration-700 justify-center items-center ${
             isHovered ? "border-white text-white" : "border-black text-black"
           }`}
         >

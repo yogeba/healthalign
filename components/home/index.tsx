@@ -65,12 +65,14 @@ function HomePage() {
       opacity: 0,
       width: 0,
       zIndex: 0,
+      height: 0,
     },
     visible: {
       translateX: 0,
       opacity: 1,
       width: "100%",
       zIndex: 1,
+      hight: "100%",
     },
   };
 
@@ -83,8 +85,13 @@ function HomePage() {
         <div className="">
           <CommonHeader />
         </div>
-        <div className="h-full mx-7 md:mx-14 lg:mx-auto lg:container">
-          <div className="flex flex-col items-center w-full h-full gap-10 lg:gap-0 lg:flex-row">
+        {/* <div className="flex items-center justify-center h-full mx-4 md:mx-8 lg:mx-auto lg:container"> */}
+        <div className="flex items-center justify-center h-full ">
+          <div
+            className={`flex flex-col items-center gap-10 md:w-full md:h-full lg:gap-0 lg:flex-row ${
+              !isSidebarVisible && "h-full"
+            }`}
+          >
             {/* leftSidebar */}
             <motion.div
               className="lg:border-r relative lg:shadow-[1px_6px_10px_0px_#00000033] flex h-full lg:max-w-[500px]"
@@ -96,6 +103,7 @@ function HomePage() {
               <LeftSideBar
                 setSearchValue={setSearchValue}
                 setGeneratedBios={setGeneratedBios}
+                setIsSidebarVisible={setIsSidebarVisible}
               />
             </motion.div>
             <div className="relative flex items-center justify-center w-full h-full">

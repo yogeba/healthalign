@@ -11,6 +11,10 @@ type IndividualProductProps = {
 const IndividualProduct: NextPage<IndividualProductProps> = ({
   individualProductData,
 }) => {
+  console.log(
+    individualProductData,
+    "individualProductData individualProductData"
+  );
   // Rest of your component code...
   return (
     <main>
