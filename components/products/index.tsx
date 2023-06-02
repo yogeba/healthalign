@@ -3,6 +3,7 @@ import CommonHeader from "../common/Header";
 import { AnimatePresence, motion } from "framer-motion";
 import ProductCardPost from "./ProductCardPost";
 import Image from "next/image";
+import Pagination from "components/common/Pagination";
 
 interface ProductPageProps {
   productsData: any[];
@@ -13,11 +14,37 @@ const ProductsPage: React.FC<ProductPageProps> = ({
   productsData,
   supplymentData,
 }) => {
-  const [isOpen, setIsOpen] = useState<Boolean>(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollableDivRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = scrollableDivRef.current?.scrollTop || 0;
+      setIsScrolling(scrollTop > 0); // Update isScrolling state based on scroll position
+    };
+
+    // Attach the scroll event listener to the scrollable div
+    const scrollableDiv = scrollableDivRef.current;
+    if (scrollableDiv) {
+      scrollableDiv.addEventListener("scroll", handleScroll);
+    }
+
+    // Clean up the scroll event listener when the component unmounts
+    return () => {
+      if (scrollableDiv) {
+        scrollableDiv.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
+
+  console.log(isScrolling, "isScrolling isScrolling");
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<string>(
-    supplymentData[0] ?? "all Products"
+    supplymentData[0] ?? "all"
   );
   const containerRef = useRef<HTMLDivElement>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const handleOptionClick = (option: string) => {
     setSelectedOption(option);
@@ -40,12 +67,35 @@ const ProductsPage: React.FC<ProductPageProps> = ({
     };
   }, []);
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = productsData.slice(indexOfFirstItem, indexOfLastItem);
+
   return (
-    <div className="flex flex-col w-full h-full">
+    <div className="relative flex flex-col w-full h-full">
+      <div className="absolute bottom-0 z-40 flex justify-center w-full mx-auto">
+        <motion.div
+          initial={{ y: 100 }}
+          animate={{ y: 0 }}
+          transition={{ duraion: 2 }}
+          className={` pt-5 pb-3 px-10  transition-all duration-[400ms] ${
+            isScrolling
+              ? "bg-[#FCF6FFD9] rounded-t-[32px] shadow-[0px_-2px_22px_0px_#00000040]"
+              : "bg-white"
+          }`}
+        >
+          <Pagination
+            totalItems={productsData.length}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
+        </motion.div>
+      </div>
       <div className="">
         <CommonHeader />
       </div>
-      <div className="h-full md:mx-14 lg:mx-auto lg:container">
+      <div className="h-full">
         <div className="flex flex-col items-center w-full h-full gap-10 lg:gap-0 lg:flex-row">
           <div className="relative flex items-center justify-center w-full h-full">
             <AnimatePresence mode="wait">
@@ -73,7 +123,7 @@ const ProductsPage: React.FC<ProductPageProps> = ({
                     </div>
                     <div
                       ref={containerRef}
-                      className="flex items-center flex-grow h-full font-bold"
+                      className="flex items-center justify-between flex-grow h-full pr-2 font-bold"
                       onClick={() => setIsOpen(!isOpen)}
                     >
                       <div className="flex items-center justify-center h-full border-white ">
@@ -94,32 +144,38 @@ const ProductsPage: React.FC<ProductPageProps> = ({
                       </div>
                     </div>
                     <AnimatePresence>
-                      {isOpen && (
+                      {isOpen && supplymentData.length > 0 && (
                         <motion.ul
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: "auto" }}
                           exit={{ opacity: 0, height: 0 }}
                           transition={{ duration: 0.2 }}
-                          className="absolute top-10 right-0 w-[172px] bg-white  z-10 shadow-[0px_0px_8px_0px_#00000040] rounded-b-lg border border-[#0000001F] overflow-hidden"
+                          className={
+                            "absolute top-10 right-0 w-[172px] bg-white  z-10 shadow-[0px_0px_8px_0px_#00000040] rounded-b-lg border border-[#0000001F] overflow-hidden"
+                          }
                         >
-                          {supplymentData.map((option) => (
-                            <motion.li
-                              key={option}
-                              onClick={() => handleOptionClick(option)}
-                              className="px-4 py-2 cursor-pointer"
-                              whileHover={{ backgroundColor: "#E5E5E5" }}
-                            >
-                              {option}
-                            </motion.li>
-                          ))}
+                          {supplymentData.length > 0 &&
+                            supplymentData.map((option) => (
+                              <motion.li
+                                key={option}
+                                onClick={() => handleOptionClick(option)}
+                                className="px-4 py-2 cursor-pointer"
+                                whileHover={{ backgroundColor: "#E5E5E5" }}
+                              >
+                                {option}
+                              </motion.li>
+                            ))}
                         </motion.ul>
                       )}
                     </AnimatePresence>
                   </div>
                 </motion.div>
-                <div className="flex relative flex-col gap-10 py-1.5 max-h-[74vh] overflow-auto scrollbar-thin">
-                  {productsData.length > 0 &&
-                    productsData.map((item, index) => {
+                <div
+                  ref={scrollableDivRef}
+                  className="flex relative flex-col gap-10 py-1.5 max-h-[76vh] overflow-auto scrollbar-thin"
+                >
+                  {currentItems.length > 0 &&
+                    currentItems.map((item, index) => {
                       const { category, available, image_url, title } = item;
                       let cleanedImageUrl = image_url;
                       if (image_url.startsWith("//")) {

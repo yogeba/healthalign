@@ -36,13 +36,6 @@ const ProductCardPost: React.FC<ProductCardPostProps> = ({
       : MARKETPLACE.SHOPIFY;
   };
 
-  const getProductUrl = (product: Product) => {
-    console.log("TODO", product?.marketplace);
-    return getProductMarketplace(product) === MARKETPLACE.SHOPIFY
-      ? product.store_canonical_url + product.url
-      : product?.url;
-  };
-
   const handleNextClick = async () => {
     console.log("clicked next", data.id);
     const id = data.id;

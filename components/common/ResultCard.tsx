@@ -1,33 +1,19 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { Toaster, toast } from "react-hot-toast";
 import Image from "next/image";
 import useReadMore from "../hooks/ReadMore";
-import { useRouter } from "next/router";
 import AudioPlayer from "./AudioPlayer";
-import axios from "axios";
 
 interface ResultCardProps {
   generatedBio: string;
 }
 
-interface SpeechOptions {
-  voice?: SpeechSynthesisVoice | null;
-  volume?: number;
-  rate?: number;
-  pitch?: number;
-}
-
 const initialWordCount = 200;
 
 const ResultCard: React.FC<ResultCardProps> = ({ generatedBio }) => {
-  const router = useRouter();
   const { limit, isExpanded, handleReadMore, handleReadLess } =
     useReadMore(initialWordCount);
-
-  const handlePlayButtonCLick = () => {
-    router.push("new/products");
-  };
 
   return (
     <motion.div
@@ -42,6 +28,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ generatedBio }) => {
         {/* waweform audio data */}
         <div className="flex">
           <AudioPlayer audioFile={"audio/Lorem_ipsum.mp3"} />
+          {/* <TextToSpeech text={"This is test data"} /> */}
         </div>
         <div className="text-sm font-Poppins inline cursor-copy font-normal leading-6 text-[#0000008F] text-justify">
           <span
@@ -60,11 +47,12 @@ const ResultCard: React.FC<ResultCardProps> = ({ generatedBio }) => {
           {generatedBio?.replace(/^\d+\.\s*/, "").length > initialWordCount &&
             (isExpanded ? (
               <button onClick={handleReadLess}>
-                <span className="inline-block px-2">Read Less</span>
+                <span className="inline-block px-2 font-bold">Read Less</span>
               </button>
             ) : (
               <button onClick={handleReadMore}>
-                ...... <span className="inline-block px-2">Read More</span>
+                ......{" "}
+                <span className="inline-block px-2 font-bold">Read More</span>
               </button>
             ))}
         </div>
@@ -79,10 +67,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ generatedBio }) => {
           className="h-[90px] w-[90px] md:h-[184px] md:w-[184px]"
         />
       </div>
-      <button
-        onClick={() => handlePlayButtonCLick()}
-        className="absolute hidden md:block right-4 top-4"
-      >
+      <button className="absolute hidden md:block right-4 top-4">
         <Image
           alt="moetar"
           src="/images/icon/post-play-button.svg"

@@ -135,7 +135,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
       <div className="">
         <CommonHeader />
       </div>
-      <div className="h-full mx-7 md:mx-14 lg:mx-auto lg:container">
+      <div className="h-full ">
         <div className="flex flex-col items-center w-full h-full gap-10 lg:gap-0 lg:flex-row">
           <div className="relative flex items-center justify-center w-full h-full py-4 md:py-10 xl:py-10">
             <div className="shadow-[0px_0px_7px_0px_#00000029] bg-white rounded-[28px] max-w-[900px] h-full  w-full">
@@ -276,9 +276,12 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1 }}
-                className="py-8 flex flex-col gap-[25px] w-full"
+                className="py-8 md:py-16 flex  justify-center items-center gap-[25px] w-full"
               >
-                <h2 className="uppercase text-base font-bold text-[#4E4E4E] font-InaiMathi text-center w-full">
+                <button className="text-xs hover:underline border border-black rounded-full font-Poppins font-medium py-2.5 px-[60px] ">
+                  Buy Now
+                </button>
+                {/* <h2 className="uppercase text-base font-bold text-[#4E4E4E] font-InaiMathi text-center w-full">
                   Buy Now
                 </h2>
                 <div className="flex flex-wrap items-center justify-center gap-5">
@@ -294,7 +297,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
                       </Link>
                     );
                   })}
-                </div>
+                </div> */}
               </motion.div>
               <div className="border-t w-full flex-col md:flex-row h-full border-[#00000017] flex justify-center">
                 {Array(numDivs)

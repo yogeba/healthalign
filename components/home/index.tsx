@@ -64,14 +64,12 @@ function HomePage() {
       translateX: "-100%",
       opacity: 0,
       width: 0,
-      zIndex: 0,
       height: 0,
     },
     visible: {
       translateX: 0,
       opacity: 1,
       width: "100%",
-      zIndex: 1,
       hight: "100%",
     },
   };
@@ -94,7 +92,7 @@ function HomePage() {
           >
             {/* leftSidebar */}
             <motion.div
-              className="lg:border-r relative lg:shadow-[1px_6px_10px_0px_#00000033] flex h-full lg:max-w-[500px]"
+              className={`lg:border-r relative lg:shadow-[1px_6px_10px_0px_#00000033] flex h-full lg:max-w-[500px]`}
               variants={leftSidebarAnimation}
               initial={isSidebarVisible ? "visible" : "hidden"}
               animate={isSidebarVisible ? "visible" : "hidden"}

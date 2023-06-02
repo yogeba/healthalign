@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ProductsOptions from "./ProductsOptions";
 import ResultCard from "components/common/ResultCard";
+import ChatResultCard from "components/common/ChatResultCard";
 
 interface RightSideBarProps {
   generatedBios: string;
@@ -123,12 +124,12 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
         </motion.div>
       ) : (
         <div className="relative w-full h-full">
-          <div className="max-h-[90vh] relative h-full w-full overflow-auto scrollbar-thin">
+          <div className="max-h-[78vh] md:max-h-[90vh]  relative h-full w-full overflow-auto scrollbar-thin">
             {generatedBios && (
               <AnimatePresence mode="wait">
                 <motion.div
                   key="content"
-                  className="flex flex-col justify-center gap-10 px-0.5 py-12 md:px-0 md:items-center md:mx-12 lg:pb-32 2xl:mx-0"
+                  className="hidden md:flex flex-col justify-center gap-10 px-0.5 py-12 md:px-0 md:items-center md:mx-12 lg:pb-32 2xl:mx-0"
                   initial="hidden"
                   animate="visible"
                   variants={zoomInVariants}
@@ -177,22 +178,55 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                 </motion.div>
               </AnimatePresence>
             )}
+            {generatedBios && (
+              <div className="relative flex flex-col w-full h-full px-4 md:hidden sm:px-0 gap-7">
+                {/* question */}
+                <div className="flex justify-end">
+                  <div className="text-[12px] relative mr-1.5 font-bold font-InaiMathi text-white bg-[#4DAF00] py-4 px-6 rounded-full inline-block ">
+                    {typeof searchValue === "string" ? searchValue : ""}
+                    <div className="absolute -right-1.5 -bottom-2">
+                      <Image
+                        alt="moetar"
+                        src="/images/icon/message-blob.svg"
+                        width={31}
+                        height={31}
+                        className="w-[30px] h-[30px]"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col w-full h-full gap-5">
+                  {generatedBios
+                    .split("\n")
+                    .reverse()
+                    .map((generatedBio: any, index: number) => {
+                      if (generatedBio.trim() === "") return null;
+                      return (
+                        <ChatResultCard
+                          key={index}
+                          generatedBio={generatedBio}
+                        />
+                      );
+                    })}
+                </div>
+              </div>
+            )}
           </div>
           {!isLeftSideBarVisible && (
             <motion.div
               initial={{ y: 100 }}
               animate={{ y: 0 }}
               transition={{ duration: 0.5 }}
-              className="absolute bottom-0 z-10 flex justify-center w-full"
+              className="absolute bottom-0 z-10 flex justify-center w-full px-2.5 md:px-0"
             >
-              <div className="w-full flex-col gap-5 bg-[#FCF6FFD9] h-full flex  rounded-t-[32px] shadow-[0px_-2px_22px_0px_#00000040] max-w-6xl relative py-[27px]">
+              <div className="w-full flex-col gap-5 bg-[#FCF6FF] h-full flex rounded-t-[12px] md:rounded-t-[32px] shadow-[0px_-2px_22px_0px_#00000040] max-w-6xl relative py-3 md:py-[27px]">
                 <form
                   onSubmit={(e) => handleSubmitClick(e)}
-                  className="flex items-center w-full gap-6 px-6"
+                  className="flex items-center w-full px-2.5 md:px-6 gap-1.5 md:gap-6"
                 >
                   <div
                     onClick={() => setIsShopSelected(!isShopSelected)}
-                    className={`border transition-all duration-500 cursor-pointer    px-5 py-5 rounded-[15px] ${
+                    className={`border h-[36px] w-[36px] md:h-[56px] md:w-[64px] transition-all duration-500 cursor-pointer flex justify-center items-center rounded-lg md:rounded-[15px] ${
                       isShopSelected
                         ? "bg-[#00A02C] border-[#00A02C]"
                         : "border-[#00000061] bg-white"
@@ -205,19 +239,34 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                       }.svg`}
                       width={20}
                       height={20}
-                      className=""
+                      className="h-[14px] w-[14px] md:h-5 md:w-5"
                     />
                   </div>
                   <div className="w-full">
                     <input
-                      className="w-full font-Inter font-normal py-4 rounded-2xl outline-none focus:border-black focus:ring-black focus:outline-none border-[#00000061] pr-16"
+                      className="w-full h-[40px] md:h-full font-Inter font-normal py-4   md:rounded-2xl outline-none rounded-lg focus:border-black focus:ring-black focus:outline-none border-[#00000061] md:pr-16"
                       type="text"
                       value={updatedSearchValue}
                       onChange={(e) => setUpdatedSearchValue(e.target.value)}
                       placeholder="Enter a Health Topic, e.g......."
                     />
                   </div>
-                  <div className="absolute right-5">
+                  <div
+                    className={`border md:hidden  h-[36px] w-[36px] md:h-[56px] md:w-[64px] transition-all duration-500 cursor-pointer flex justify-center items-center rounded-lg md:rounded-[15px] ${
+                      false
+                        ? "bg-[#00A02C] border-[#00A02C]"
+                        : "border-[#00000061] bg-white"
+                    }`}
+                  >
+                    <Image
+                      alt="moetar"
+                      src={`/images/icon/mic-icon.svg`}
+                      width={20}
+                      height={20}
+                      className="h-[14px] w-[14px] md:h-5 md:w-5"
+                    />
+                  </div>
+                  <div className="absolute hidden right-5 md:block">
                     <div className="flex items-center justify-end gap-3 mx-4">
                       <label htmlFor="documentData" className="cursor-pointer">
                         <Image

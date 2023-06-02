@@ -26,7 +26,10 @@ button.animated:hover {
 /* custom scrollbar */
 .scrollbar-thin::-webkit-scrollbar {
     width: 0.2em;
+    height: 0.4em;
 }
+
+
 
 .scrollbar-thin::-webkit-scrollbar-track {
     box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);

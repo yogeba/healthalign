@@ -62,13 +62,13 @@ const AudioPlayer = ({ audioFile }: { audioFile: string }) => {
   };
 
   return (
-    <div className="flex shadow-[0px_0px_3px_0px_#00000040] px-[8px] md:px-[12px] rounded-[15px] h-8 md:h-16 items-center w-full relative gap-3 max-w-[450px] pr-5 md:pr-7 ">
+    <div className="flex shadow-[0px_0px_3px_0px_#00000040] px-[8px] md:px-[12px] rounded-[15px] h-12 md:h-16 items-center w-full relative gap-3 max-w-[450px] pr-5 md:pr-7 ">
       <h2 className="absolute text-[#0000008F] font-semibold right-0 md:pr-1 text-[8px] md:text-xs -rotate-90 font-Poppins">
         {formatTime(duration)}
       </h2>
       <button
         onClick={togglePlayback}
-        className="h-[14px] w-[14px] md:w-8 md:h-8 flex-shrink-0 flex justify-center items-center bg-[#4DAF00] rounded-full"
+        className="h-[16px] w-[16px] md:w-8 md:h-8 flex-shrink-0 flex justify-center items-center bg-[#4DAF00] rounded-full"
       >
         {isPlaying ? (
           <Image
@@ -76,7 +76,7 @@ const AudioPlayer = ({ audioFile }: { audioFile: string }) => {
             src="/images/icon/play_icon.svg"
             width={20}
             height={20}
-            className="w-3 h-3 md:w-5 md:h-5"
+            className="w-2.5 h-2.5 md:w-5 md:h-5"
           />
         ) : (
           <Image
@@ -84,7 +84,7 @@ const AudioPlayer = ({ audioFile }: { audioFile: string }) => {
             src="/images/icon/pause_icon.svg"
             width={20}
             height={20}
-            className="w-3 h-3 md:w-5 md:h-5"
+            className="w-2.5 h-2.5 md:w-5 md:h-5"
           />
         )}
       </button>

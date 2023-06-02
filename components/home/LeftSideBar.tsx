@@ -39,7 +39,9 @@ const LeftSideBar: React.FC<BodyProps> = ({
       generateBio(e);
     } else {
       setSearchValue("Test data");
-      setGeneratedBios("thi is test data");
+      setGeneratedBios(
+        "thi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test data"
+      );
       setIsSidebarVisible(false);
     }
   };
@@ -84,7 +86,7 @@ const LeftSideBar: React.FC<BodyProps> = ({
   return (
     <div className="flex items-center justify-center">
       <div className="flex items-center justify-center w-full h-full">
-        <div className="flex flex-col gap-5 xs:px-2 sm:px-12">
+        <div className="z-10 flex flex-col gap-5 xs:px-2 sm:px-12">
           <motion.h2
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -94,19 +96,19 @@ const LeftSideBar: React.FC<BodyProps> = ({
             Discover Your Optimal <span className="text-[#4DAF00]">Health</span>{" "}
             Needs
           </motion.h2>
-          <motion.p
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
             className="text-sm  md:text-base text-center font-Inter text-[#0000007D] font-normal lg:max-w-[351px]"
           >
             Plant Based Nature's Secrets for a Healthier, Happier Life.
-          </motion.p>
+          </motion.div>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
-            className="flex flex-col py-5 mb-2.5"
+            className="flex flex-col py-5 mb-2.5 px-4 md:px-0"
           >
             <div className="flex gap-2.5 items-center">
               <button className="flex items-center justify-center flex-shrink-0 h-[14px] w-[14px] text-[9px] md:text-xs font-bold md:font-semibold text-white bg-black rounded-full md:w-5 md:h-5 ">
