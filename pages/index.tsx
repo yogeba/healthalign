@@ -9,21 +9,30 @@ import Header from "../components/Header";
 import LoadingDots from "../components/LoadingDots";
 import axios from "axios";
 import ProductList from "../components/ProductList";
-import { Product } from "../types";
+import { Product, ProductById } from "../types";
 import { gql, useQuery } from "@apollo/client";
 import client from "../lib/apolloClient";
+import SearchProductList from "components/SearchProductList";
+const MicRecorder = require("mic-recorder-to-mp3");
 
 const Home: NextPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [topic, setTopic] = useState("");
+  const [prompt, setPrompt] = useState("");
   const [generatedBios, setGeneratedBios] = useState<string>("");
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  // const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<ProductById[]>([]);
   const [cartId, setCartId] = useState<string>("");
+  const recorder = new MicRecorder({
+    bitRate: 128,
+  });
 
   // References
   const cartIdRef = useRef<string | null>(null);
 
-  const prompt = `As Andrew Huberman, provide low-cost, low-risk, and high-output information and solutions on the following health-related questions about ${topic}:
+  const getPrompt = (
+    topic: string
+  ) => `As Andrew Huberman, provide low-cost, low-risk, and high-output information and solutions on the following health-related questions about ${topic}:
       1. What is ${topic}? Provide a brief definition and overview.
       2. What are the main signs and symptoms of ${topic}? List at least 5.
       3. How is ${topic} diagnosed? Describe the process and any tests involved.
@@ -39,6 +48,12 @@ const Home: NextPage = () => {
 Make sure each generated answer is complete, contains short sentences, and is based on the context: ${topic}${
     topic.slice(-1) === "." ? "" : "."
   }`;
+
+  const setTopicAndPrompt = (topic: string) => {
+    setTopic(topic);
+    setPrompt(getPrompt(topic));
+    console.log({ topic, prompt, a: "1" });
+  };
 
   const contentRef = useRef<null | HTMLDivElement>(null);
 
@@ -84,12 +99,27 @@ Make sure each generated answer is complete, contains short sentences, and is ba
     return products.products;
   }
 
+  async function fetchProducts(query: string): Promise<Product[]> {
+    const response = await axios.get(
+      "/api/search?searchQuery=" + encodeURIComponent(query)
+    );
+    const products = response.data;
+    setFilteredProducts((prevProducts) => [...prevProducts, ...products]);
+
+    console.log("All Products: ", filteredProducts);
+    return products;
+  }
+
   // Event handlers
 
-  const generateBio = async (e: any) => {
-    e.preventDefault();
+  const generateBio = async (e?: any) => {
+    console.log({ topic, prompt });
+    if (!topic || !prompt) return;
+
+    if (e) e.preventDefault();
     setGeneratedBios("");
     setLoading(true);
+
     const response = await fetch("/api/generate", {
       method: "POST",
       headers: {
@@ -125,6 +155,69 @@ Make sure each generated answer is complete, contains short sentences, and is ba
     setLoading(false);
   };
 
+  const startrecord = async () => {
+    recorder
+      .start()
+      .then(() => {
+        // something else
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    // Once you are done singing your best song, stop and get the mp3.
+  };
+
+  const stopRecord = async () => {
+    recorder
+      .stop()
+      .getMp3()
+      .then(async ([buffer, blob]) => {
+        // do what ever you want with buffer and blob
+        // Example: Create a mp3 file and play
+        const file = new File(buffer, "voice.mp3", {
+          type: blob.type,
+          lastModified: Date.now(),
+        });
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("model", "whisper-1");
+        formData.append("response_format", "json");
+        formData.append("temperature", "0");
+        formData.append("language", "en");
+
+        // Set the API endpoint and headers
+        const apiUrl = "https://api.openai.com/v1/audio/transcriptions";
+        const headers = {
+          Accept: "application/json",
+          Authorization: `Bearer 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`,
+        };
+
+        // Send the request to the Whisper API
+        const res = await axios.post(apiUrl, formData, { headers });
+
+        //TODO
+        // const response = await fetch("/api/whisper", {
+        //   method: "POST",
+
+        //   body: formData,
+        // });
+        // const text = await response.json();
+        // console.log({ whisper: text });
+        if (res?.data?.text) {
+          setTopicAndPrompt(res.data.text);
+          generateBio();
+        }
+        const player = new Audio(URL.createObjectURL(file));
+        player.play();
+      })
+      .catch((e: any) => {
+        alert("We could not retrieve your message");
+        console.log(e);
+      });
+  };
+
   // Side effects
 
   useEffect(() => {
@@ -147,7 +240,7 @@ Make sure each generated answer is complete, contains short sentences, and is ba
 
         for (const supplementName of allSupplementNames) {
           try {
-            const products = await fetchRyeProducts(supplementName);
+            const products = await fetchProducts(supplementName);
             console.log(`Rye products for "${supplementName}":`, products);
           } catch (error) {
             console.error(
@@ -162,7 +255,7 @@ Make sure each generated answer is complete, contains short sentences, and is ba
 
   useEffect(() => {
     setFilteredProducts([]);
-  }, [topic]);
+  }, [topic, prompt]);
 
   const fadeInVariants = {
     hidden: { opacity: 0 },
@@ -235,7 +328,7 @@ Make sure each generated answer is complete, contains short sentences, and is ba
           </div>
           <textarea
             value={topic}
-            onChange={(e) => setTopic(e.target.value)}
+            onChange={(e) => setTopicAndPrompt(e.target.value)}
             rows={4}
             className="w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black my-5"
             placeholder={
@@ -249,6 +342,24 @@ Make sure each generated answer is complete, contains short sentences, and is ba
           <div className="block">
             <DropDown vibe={vibe} setVibe={(newVibe) => setVibe(newVibe)} />
           </div> */}
+
+          {!loading && (
+            <button
+              className="bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={() => startrecord()}
+            >
+              StartRecord
+            </button>
+          )}
+
+          {!loading && (
+            <button
+              className="bg-red-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={() => stopRecord()}
+            >
+              StopRecord
+            </button>
+          )}
 
           {!loading && (
             <button
@@ -316,7 +427,7 @@ Make sure each generated answer is complete, contains short sentences, and is ba
             {filteredProducts.length > 0 && (
               <h1 className="text-2xl font-bold mb-6">Supplements for you</h1>
             )}
-            <ProductList products={filteredProducts} />
+            <SearchProductList products={filteredProducts} />
           </div>
         </div>
       </main>
