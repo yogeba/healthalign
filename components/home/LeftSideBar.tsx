@@ -37,12 +37,6 @@ const LeftSideBar: React.FC<BodyProps> = ({
     setSearchItem("");
     if (typeof searchItem === "string" && searchItem.length > 0) {
       generateBio(e);
-    } else {
-      setSearchValue("Test data");
-      setGeneratedBios(
-        "thi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test datathi is test data"
-      );
-      setIsSidebarVisible(false);
     }
   };
   const generateBio = async (e: any) => {

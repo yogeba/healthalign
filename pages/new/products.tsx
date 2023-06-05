@@ -7,7 +7,7 @@ interface ProductsProps {
 }
 
 const Products: NextPage<ProductsProps> = ({ products }) => {
-  console.log(products, "products products");
+  console.log(products, "products products updated products");
   const [supplymentData, setSupplymentData] = useState<string[]>([]);
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -29,7 +29,8 @@ export const getServerSideProps: GetServerSideProps<ProductsProps> = async ({
   req,
 }) => {
   const host = req.headers.host;
-  const apiUrl = `http://${host}/api/rye?query=supplement`;
+  // const apiUrl = `http://${host}/api/search?searchQuery=supplement`;
+  const apiUrl = `http://${host}/api/search?searchQuery=supplement`;
 
   try {
     const response = await fetch(apiUrl);
@@ -37,7 +38,7 @@ export const getServerSideProps: GetServerSideProps<ProductsProps> = async ({
 
     return {
       props: {
-        products: data.products,
+        products: data,
       },
     };
   } catch (error) {

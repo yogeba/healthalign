@@ -11,6 +11,7 @@ interface RightSideBarProps {
   searchValue: string | null;
   setGeneratedBios: React.Dispatch<React.SetStateAction<string>>;
   setSearchValue: React.Dispatch<React.SetStateAction<string | null>>;
+  allSupplementNames: string[];
 }
 
 const RightSideBar: React.FC<RightSideBarProps> = ({
@@ -19,6 +20,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
   searchValue,
   setGeneratedBios,
   setSearchValue,
+  allSupplementNames,
 }) => {
   const [isShopSelected, setIsShopSelected] = useState(false);
   const [updatedSearchValue, setUpdatedSearchValue] = useState("");
@@ -295,9 +297,15 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                     </div>
                   </div>
                 </form>
-                {isShopSelected && (
+                {allSupplementNames.length > 0 && isShopSelected && (
                   <div className="flex items-center w-full gap-6">
-                    <ProductsOptions />
+                    <ProductsOptions
+                      optionsList={
+                        allSupplementNames.length > 7
+                          ? allSupplementNames.slice(0, 7)
+                          : allSupplementNames
+                      }
+                    />
                   </div>
                 )}
               </div>

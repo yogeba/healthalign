@@ -11,6 +11,7 @@ type IndividualProductProps = {
 const IndividualProduct: NextPage<IndividualProductProps> = ({
   individualProductData,
 }) => {
+  console.log(individualProductData, "individualProductData");
   // Rest of your component code...
   return (
     <main>
@@ -22,12 +23,18 @@ const IndividualProduct: NextPage<IndividualProductProps> = ({
 export const getServerSideProps: GetServerSideProps<
   IndividualProductProps
 > = async (context) => {
-  const { query } = context;
-  const { id, type } = query;
+  const { query, req } = context;
+  const { id } = query;
+  const host = req.headers.host;
 
   let productInfo;
   try {
-    productInfo = await fetchProduct(id as string, type as MARKETPLACE); // Cast the `type` parameter to `MARKETPLACE`
+    const response = await fetch(`http://${host}/api/product?id=${id}`);
+    if (response.ok) {
+      productInfo = await response.json();
+    } else {
+      throw new Error("API request failed");
+    }
   } catch (e) {
     console.log("CAUGHT ERROR ON PRODUCT, requested by URL");
   }

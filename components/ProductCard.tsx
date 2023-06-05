@@ -29,6 +29,7 @@ interface ProductCardProps {
 
 //TODO check Types with yogesh
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  console.log(product, "this is new individual product");
   if (product.marketplace === MARKETPLACE.AMAZON) {
     return (
       <div className="bg-white rounded-lg shadow p-4 flex flex-col">

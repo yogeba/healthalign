@@ -9,6 +9,7 @@ interface ProductListProps {
   products?: Product[];
 }
 const ProductList: React.FC<ProductListProps> = ({ products = [] }) => {
+  console.log(products, "products, new one");
   const [cartId, setCartId] = useState<string | null>(null);
   const router = useRouter();
 

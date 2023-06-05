@@ -80,7 +80,7 @@ const ProductsPage: React.FC<ProductPageProps> = ({
           transition={{ duraion: 2 }}
           className={` pt-5 pb-3 px-10  transition-all duration-[400ms] ${
             isScrolling
-              ? "bg-[#FCF6FFD9] rounded-t-[32px] shadow-[0px_-2px_22px_0px_#00000040]"
+              ? "bg-[#FCF6FF] rounded-t-[32px] shadow-[0px_-2px_22px_0px_#00000040]"
               : "bg-white"
           }`}
         >
@@ -176,30 +176,29 @@ const ProductsPage: React.FC<ProductPageProps> = ({
                 >
                   {currentItems.length > 0 &&
                     currentItems.map((item, index) => {
-                      const { category, available, image_url, title } = item;
-                      let cleanedImageUrl = image_url;
-                      if (image_url.startsWith("//")) {
-                        cleanedImageUrl = cleanedImageUrl.replace(/^\/\//, "");
-                      }
-                      if (!cleanedImageUrl.startsWith("https://")) {
-                        cleanedImageUrl = `https://${cleanedImageUrl}`;
-                      } else {
-                        cleanedImageUrl = cleanedImageUrl;
-                      }
-                      if (available) {
-                        return (
-                          <ProductCardPost
-                            key={index}
-                            availability={category}
-                            title={title}
-                            description={
-                              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed doeiusmod tempor incididunt ut labore et dolore magna aliqua. Utenim ad minim veniam, quis nost rud exercitation ullamco laboris."
-                            }
-                            data={item}
-                            image={cleanedImageUrl}
-                          />
-                        );
-                      }
+                      console.log(item, "inside map");
+                      const { available, title, images } = item;
+                      console.log(images, "images list");
+                      // let cleanedImageUrl = image_url;
+                      // if (image_url.startsWith("//")) {
+                      //   cleanedImageUrl = cleanedImageUrl.replace(/^\/\//, "");
+                      // }
+                      // if (!cleanedImageUrl.startsWith("https://")) {
+                      //   cleanedImageUrl = `https://${cleanedImageUrl}`;
+                      // } else {
+                      //   cleanedImageUrl = cleanedImageUrl;
+                      // }
+                      return (
+                        <ProductCardPost
+                          key={index}
+                          title={title}
+                          description={
+                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed doeiusmod tempor incididunt ut labore et dolore magna aliqua. Utenim ad minim veniam, quis nost rud exercitation ullamco laboris."
+                          }
+                          data={item}
+                          image={images.length > 0 && images[0].url}
+                        />
+                      );
                     })}
                 </div>
               </div>

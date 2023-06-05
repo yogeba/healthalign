@@ -30,7 +30,7 @@ const Pagination: React.FC<{
   };
 
   return (
-    <div className="flex justify-center">
+    <div className="flex flex-wrap justify-center md:flex-nowrap">
       <button
         className="p-3 rounded-md bg-[#00A02C] mr-6"
         onClick={handlePreviousClick}

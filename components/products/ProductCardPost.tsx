@@ -2,26 +2,26 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { Product } from "types";
 import { MARKETPLACE } from "constants/marketplace";
-import { fetchProduct } from "lib/products";
+import { Product } from "types/searchProduct";
+import useReadMore from "components/hooks/ReadMore";
 
-const initialWordCount = 252;
+const initialWordCount = 150;
 
 interface ProductCardPostProps {
   title: string;
   image: string;
-  availability: string;
   description: string;
   data: any;
 }
 const ProductCardPost: React.FC<ProductCardPostProps> = ({
   title,
   image,
-  availability,
   description,
   data,
 }) => {
+  const { limit, isExpanded, handleReadMore, handleReadLess } =
+    useReadMore(initialWordCount);
   const router = useRouter();
 
   const [isHovered, setisHovered] = useState<Boolean>(false);
@@ -38,19 +38,21 @@ const ProductCardPost: React.FC<ProductCardPostProps> = ({
 
   const handleNextClick = async () => {
     console.log("clicked next", data.id);
-    const id = data.id;
-    const type = getProductMarketplace(data);
+    const id = data.ASIN;
+    // const type = getProductMarketplace(data);
 
     // Redirect to "/products" with parameters using the Router
     router.push({
       pathname: "/new/product",
-      query: { id, type },
+      query: { id },
     });
   };
 
+  console.log(data, "datadata");
+
   return (
     <motion.div
-      className="relative mx-8 md:mx-[50px] h-[200px] rounded-[28px] py-[24px] max-w-5xl lg:w-[900px] px-8 flex items-center gap-10 cursor-pointer justify-between shadow-[0px_0px_7px_0px_#00000029] bg-white"
+      className="relative mx-8 md:mx-[50px] rounded-[28px] py-[24px] max-w-5xl lg:w-[900px] px-8 flex items-center gap-10 cursor-pointer justify-between shadow-[0px_0px_7px_0px_#00000029] bg-white h-full"
       variants={zooInVariants}
       initial="hidden"
       animate="visible"
@@ -80,19 +82,24 @@ const ProductCardPost: React.FC<ProductCardPostProps> = ({
               {/* Nature Bounties D-Complex With Folic Acid Plus Vitamins C */}
               {title ?? ""}
             </h2>
-            {/* <div className="text-sm font-normal font-InaiMathi text-[#888888] max-w-[580px]">
-              {isExpanded ? description : description.slice(0, limit)}
-              {description.length > initialWordCount &&
-                (isExpanded ? (
-                  <button onClick={handleReadLess}>
-                    <span className="inline-block px-2">Read Less</span>
-                  </button>
-                ) : (
-                  <button onClick={handleReadMore}>
-                    ...... <span className="inline-block px-2">Read More</span>
-                  </button>
-                ))}
-            </div> */}
+            {data.description.length > 0 && (
+              <div className="text-sm font-normal pr-2 font-InaiMathi text-[#888888] max-w-[580px] text-justify">
+                {isExpanded
+                  ? data.description
+                  : data.description.slice(0, limit)}
+                {description.length > initialWordCount &&
+                  (isExpanded ? (
+                    <button onClick={handleReadLess}>
+                      <span className="inline-block px-2">Read Less</span>
+                    </button>
+                  ) : (
+                    <button onClick={handleReadMore}>
+                      ......{" "}
+                      <span className="inline-block px-2">Read More</span>
+                    </button>
+                  ))}
+              </div>
+            )}
             {/* product button */}
             <div className="absolute flex items-center h-full -right-4 product md:right-4">
               <div
@@ -128,7 +135,7 @@ const ProductCardPost: React.FC<ProductCardPostProps> = ({
             isHovered ? "border-white text-white" : "border-black text-black"
           }`}
         >
-          A+
+          {data?.grade}
         </div>
       </div>
     </motion.div>

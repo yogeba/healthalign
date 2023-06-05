@@ -1,18 +1,11 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MARKETPLACE } from "constants/marketplace";
 import { useRouter } from "next/router";
-import { Product } from "types";
-
-const optionsList = [
-  "vitamins C",
-  "Bounty b-Complex",
-  "folic acid",
-  "bountry b-complex",
-  "folic Acid",
-];
-function ProductsOptions() {
+interface PrductOptionsProps {
+  optionsList: string[];
+}
+const ProductsOptions: React.FC<PrductOptionsProps> = ({ optionsList }) => {
   const [selectedFilter, setSelectedFilter] = useState(optionsList[0]);
   const [allProductData, setAllProductData] = useState<any>([]);
   const router = useRouter();
@@ -20,11 +13,11 @@ function ProductsOptions() {
   useEffect(() => {
     // const host = req.headers.host;
     const fetchData = async () => {
-      const apiUrl = `/api/rye?query=supplement`;
+      const apiUrl = `api/search?searchQuery=supplement`;
       try {
         const response = await fetch(apiUrl);
         const data = await response.json();
-        setAllProductData(data.products);
+        setAllProductData(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -32,20 +25,13 @@ function ProductsOptions() {
     fetchData();
   }, []);
 
-  const getProductMarketplace = (product: Product) => {
-    return product?.request_domain === "amazon.com"
-      ? MARKETPLACE.AMAZON
-      : MARKETPLACE.SHOPIFY;
-  };
-
   const individualProductClick = (data: any) => {
-    const id = data.id;
-    const type = getProductMarketplace(data);
+    const id = data.ASIN;
 
     // Redirect to "/products" with parameters using the Router
     router.push({
       pathname: "/new/product",
-      query: { id, type },
+      query: { id },
     });
   };
 
@@ -90,17 +76,16 @@ function ProductsOptions() {
           <div className="flex flex-shrink-0 w-full overflow-x-auto h-full pb-3 max-w-[80vw] lg:max-w-[1024px] gap-5 scrollbar-thin">
             {allProductData.length > 0 &&
               allProductData.map((item: any, index: number) => {
-                const { category, available, image_url, title } = item;
-                let cleanedImageUrl = image_url;
+                const { description, images, title, grade } = item;
 
-                if (image_url.startsWith("//")) {
-                  cleanedImageUrl = cleanedImageUrl.replace(/^\/\//, "");
-                }
-                if (!cleanedImageUrl.startsWith("https://")) {
-                  cleanedImageUrl = `https://${cleanedImageUrl}`;
-                } else {
-                  cleanedImageUrl = cleanedImageUrl;
-                }
+                // if (image_url.startsWith("//")) {
+                //   cleanedImageUrl = cleanedImageUrl.replace(/^\/\//, "");
+                // }
+                // if (!cleanedImageUrl.startsWith("https://")) {
+                //   cleanedImageUrl = `https://${cleanedImageUrl}`;
+                // } else {
+                //   cleanedImageUrl = cleanedImageUrl;
+                // }
                 return (
                   <div
                     onClick={() => individualProductClick(item)}
@@ -109,7 +94,7 @@ function ProductsOptions() {
                   >
                     <Image
                       alt="moetar"
-                      src={cleanedImageUrl}
+                      src={images.length > 0 && images[0].url}
                       width={66}
                       height={131}
                       className="h-[60px] w-[30px] md:h-[131px] md:w-[66px] flex-grow"
@@ -118,16 +103,14 @@ function ProductsOptions() {
                       <div className="text-[6px] sm:text-[8px] md:text-xs font-bold font-InaiMathi text-[#595959] line-clamp-3">
                         {title ?? ""}
                       </div>
-                      <div className="text-[5px] sm:text-[6px] md:text-[7px] font-normal text-[#888888] font-InaiMathi ">
-                        Lorem ipsum dolor sit amet, conse ctetur adipiscing
-                        elit, sed do eiusm od tempor incididunt ut labore et d
-                        olore magna aliqua. Ut enim ad mi nim.
+                      <div className="text-[5px] line-clamp-4 sm:text-[6px] md:text-[7px] font-normal text-[#888888] font-InaiMathi ">
+                        {description ?? ""}
                       </div>
                     </div>
                     <div className="flex items-center gap-5">
                       <div className="h-[16px] w-[16px]  md:h-[26px] cursor-pointer absolute right-1.5 rounded-full bottom-1.5 p-0.5 md:w-[26px] bg-[#00A02C]">
-                        <div className=" text-[4.5px] sm:text-[5px] md:text-[7px] font-bold font-Poppins rounded-full flex justify-center items-center h-full border border-white text-white">
-                          5.0
+                        <div className=" text-[4.5px] sm:text-[5px] md:text-[6px] font-bold font-Poppins rounded-full flex justify-center items-center h-full border border-white text-white">
+                          {grade}
                         </div>
                       </div>
                     </div>
@@ -139,6 +122,6 @@ function ProductsOptions() {
       </motion.div>
     </AnimatePresence>
   );
-}
+};
 
 export default ProductsOptions;

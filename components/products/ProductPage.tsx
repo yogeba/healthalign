@@ -1,19 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 
 import PerformanceCircle from "../common/PerformanceCircle";
 import CommonHeader from "../common/Header";
 import { motion } from "framer-motion";
 import PerformanceFill from "../common/PerformanceFill";
-import { fetchProduct } from "lib/products";
-
-const productImageData = [
-  "product-image-1.png",
-  "product-image-2.png",
-  "product-image-3.png",
-  "product-image-4.png",
-];
 
 const alphabetTabData = [
   { title: "A", isSelected: true, value: "47" },
@@ -24,12 +15,6 @@ const alphabetTabData = [
   { title: "F", isSelected: false, value: "30" },
 ];
 
-const buttonData = [
-  { index: 0, title: "iHerb (International)", linkTo: "iHerb" },
-  { index: 0, title: "Amazon CAN", linkTo: "amazon-can" },
-  { index: 0, title: "Amazon USA", linkTo: "amazon-usa" },
-];
-
 interface ProductPageProps {
   productData: any;
 }
@@ -37,6 +22,7 @@ interface ProductPageProps {
 const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
   const [isSelectedTabCertification, setSelectedTabCertification] =
     useState<Boolean>(false);
+
   const [imageData, setimageData] = useState(
     productData.images.length > 0 && productData.images.map((i: any) => i.url)
   );
@@ -52,80 +38,18 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
     animate: { x: 0 },
   };
 
-  const performanceData = [
-    {
-      index: 0,
-      title: "Test1",
-      quantity: "1000.0 ug",
-      performance: "40",
-    },
-    {
-      index: 1,
-      title: "Test1",
-      quantity: "1000.0 ug",
-      performance: "10",
-    },
-    {
-      index: 2,
-      title: "Test1",
-      quantity: "1000.0 ug",
-      performance: "60",
-    },
-    {
-      index: 3,
-      title: "Test1",
-      quantity: "1000.0 ug",
-      performance: "20",
-    },
-    {
-      index: 4,
-      title: "Test1",
-      quantity: "1000.0 ug",
-      performance: "55",
-    },
-    {
-      index: 0,
-      title: "Test1",
-      quantity: "1000.0 ug",
-      performance: "40",
-    },
-    {
-      index: 1,
-      title: "Test1",
-      quantity: "1000.0 ug",
-      performance: "10",
-    },
-    {
-      index: 2,
-      title: "Test1",
-      quantity: "1000.0 ug",
-      performance: "60",
-    },
-    {
-      index: 3,
-      title: "Test1",
-      quantity: "1000.0 ug",
-      performance: "20",
-    },
-    {
-      index: 4,
-      title: "Test1",
-      quantity: "1000.0 ug",
-      performance: "55",
-    },
-    {
-      index: 4,
-      title: "Test1",
-      quantity: "1000.0 ug",
-      performance: "55",
-    },
-    {
-      index: 4,
-      title: "Test1",
-      quantity: "1000.0 ug",
-      performance: "55",
-    },
-  ];
+  const performanceData = Object.entries(productData.properties).map(
+    ([key, value], index) => {
+      const { found } = value as { found: any };
+      // parseFloat(uspLimit)
+      return {
+        index,
+        title: key,
+        quantity: found ?? found,
+        performance: 15,
+      };
+    }
+  );
 
   // Calculate the number of divs needed based on the data length
   const numDivs = Math.ceil(performanceData.length / 4);
@@ -247,7 +171,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
                     </motion.button>
                   </motion.div>
                   <div className="flex justify-center w-full ">
-                    <PerformanceCircle performance={52} />
+                    <PerformanceCircle performance={productData?.score} />
                   </div>
                   <div className="flex items-end justify-center gap-3">
                     {alphabetTabData.map((item, index) => {

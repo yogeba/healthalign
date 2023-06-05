@@ -133,6 +133,7 @@ function HomePage() {
                 searchValue={searchValue}
                 setGeneratedBios={setGeneratedBios}
                 setSearchValue={setSearchValue}
+                allSupplementNames={allSupplementNames}
               />
               {!isSidebarVisible && (
                 <motion.div
