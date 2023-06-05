@@ -114,6 +114,12 @@ const SearchProductList: React.FC<ProductListProps> = ({ products = [] }) => {
             >
               Buy Now
             </button>
+            <button
+              className="rounded-xl text-black font-medium px-4 py-2 mt-auto w-full bg-yellow-200"
+              onClick={() => router.push(`/product?id=${product.identifier}`)}
+            >
+              View Details
+            </button>
           </div>
         </div>
       ))}

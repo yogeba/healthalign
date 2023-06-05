@@ -191,12 +191,20 @@ Make sure each generated answer is complete, contains short sentences, and is ba
         const apiUrl = "https://api.openai.com/v1/audio/transcriptions";
         const headers = {
           Accept: "application/json",
-          Authorization:
-            "Bearer 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",
+          Authorization: `Bearer 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`,
         };
 
         // Send the request to the Whisper API
         const res = await axios.post(apiUrl, formData, { headers });
+
+        //TODO
+        // const response = await fetch("/api/whisper", {
+        //   method: "POST",
+
+        //   body: formData,
+        // });
+        // const text = await response.json();
+        // console.log({ whisper: text });
         if (res?.data?.text) {
           setTopicAndPrompt(res.data.text);
           generateBio();
