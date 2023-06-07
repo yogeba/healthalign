@@ -48,8 +48,6 @@ const ProductCardPost: React.FC<ProductCardPostProps> = ({
     });
   };
 
-  console.log(data, "datadata");
-
   return (
     <motion.div
       className="relative mx-8 md:mx-[50px] rounded-[28px] py-[24px] max-w-5xl lg:w-[900px] px-8 flex items-center gap-10 cursor-pointer justify-between shadow-[0px_0px_7px_0px_#00000029] bg-white h-full"

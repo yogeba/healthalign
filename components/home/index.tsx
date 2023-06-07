@@ -105,28 +105,30 @@ function HomePage() {
               />
             </motion.div>
             <div className="relative flex items-center justify-center w-full h-full">
-              <button
-                onClick={toggleDivVisibility}
-                className="absolute hidden lg:block left-0 z-10 w-8 h-10 bg-[#4DAF00] text-white rounded-r-full cursor-pointer top-1/2"
-              >
-                {isSidebarVisible ? (
-                  <Image
-                    alt="back arrow"
-                    src="/images/icon/right-arrow.svg"
-                    width={25}
-                    height={25}
-                    className="ml-0.5 rotate-180"
-                  />
-                ) : (
-                  <Image
-                    alt="back arrow"
-                    src="/images/icon/right-arrow.svg"
-                    width={25}
-                    height={25}
-                    className="ml-0.5 "
-                  />
-                )}
-              </button>
+              {generatedBios.length > 0 && (
+                <button
+                  onClick={toggleDivVisibility}
+                  className="absolute hidden lg:block left-0 z-10 w-8 h-10 bg-[#4DAF00] text-white rounded-r-full cursor-pointer top-1/2"
+                >
+                  {isSidebarVisible ? (
+                    <Image
+                      alt="back arrow"
+                      src="/images/icon/right-arrow.svg"
+                      width={25}
+                      height={25}
+                      className="ml-0.5 rotate-180"
+                    />
+                  ) : (
+                    <Image
+                      alt="back arrow"
+                      src="/images/icon/right-arrow.svg"
+                      width={25}
+                      height={25}
+                      className="ml-0.5 "
+                    />
+                  )}
+                </button>
+              )}
               <RightSideBar
                 isLeftSideBarVisible={isSidebarVisible}
                 generatedBios={generatedBios}

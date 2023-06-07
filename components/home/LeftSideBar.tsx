@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import LoadingDots from "../LoadingDots";
+import axios from "axios";
+const MicRecorder = require("mic-recorder-to-mp3");
 
 interface BodyProps {
   setGeneratedBios: React.Dispatch<React.SetStateAction<string>>;
@@ -16,6 +18,7 @@ const LeftSideBar: React.FC<BodyProps> = ({
 }) => {
   const [searchItem, setSearchItem] = useState<string | null>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [isRecording, setIsRecording] = useState(false);
 
   const prompt = `As Andrew Huberman, provide low-cost, low-risk, and high-output information and solutions on the following health-related questions about ${searchItem}:
       1. What is ${searchItem}? Provide a brief definition and overview.
@@ -36,7 +39,12 @@ const LeftSideBar: React.FC<BodyProps> = ({
     setSearchValue(searchItem);
     setSearchItem("");
     if (typeof searchItem === "string" && searchItem.length > 0) {
+      setIsSidebarVisible(false);
       generateBio(e);
+    } else {
+      setIsSidebarVisible(false);
+      setSearchValue("this is test data");
+      setGeneratedBios("This is test data");
     }
   };
   const generateBio = async (e: any) => {
@@ -76,6 +84,64 @@ const LeftSideBar: React.FC<BodyProps> = ({
     }
 
     setLoading(false);
+  };
+
+  const recorder = new MicRecorder({
+    bitRate: 128,
+  });
+
+  const startrecord = async () => {
+    setIsRecording(true);
+    recorder
+      .start()
+      .then(() => {
+        // something else
+      })
+      .catch((e: any) => {
+        console.error(e);
+      });
+
+    // Once you are done singing your best song, stop and get the mp3.
+  };
+
+  const stopRecord = async () => {
+    setIsRecording(false);
+    recorder
+      .stop()
+      .getMp3()
+      .then(async ([buffer, blob]: any) => {
+        // do what ever you want with buffer and blob
+        // Example: Create a mp3 file and play
+        const file = new File(buffer, "voice.mp3", {
+          type: blob.type,
+          lastModified: Date.now(),
+        });
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("model", "whisper-1");
+        formData.append("response_format", "json");
+        formData.append("temperature", "0");
+        formData.append("language", "en");
+
+        // Set the API endpoint and headers
+        const apiUrl = "https://api.openai.com/v1/audio/transcriptions";
+        const headers = {
+          Accept: "application/json",
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        };
+
+        // Send the request to the Whisper API
+        const res = await axios.post(apiUrl, formData, { headers });
+        if (res?.data?.text) {
+          console.log(res?.data?.text);
+          setIsRecording(false);
+        }
+      })
+      .catch((e: any) => {
+        alert("We could not retrieve your message");
+        console.log(e);
+      });
   };
   return (
     <div className="flex items-center justify-center">
@@ -139,15 +205,27 @@ const LeftSideBar: React.FC<BodyProps> = ({
                     <input className="hidden" type="file" id="documentData" />
                   </label>
 
-                  <button>
-                    <Image
-                      alt="moetar"
-                      src="/images/icon/mic-icon.svg"
-                      width={15}
-                      height={15}
-                      className="cursor-pointer"
-                    />
-                  </button>
+                  {!isRecording ? (
+                    <button onClick={() => startrecord()}>
+                      <Image
+                        alt="moetar"
+                        src="/images/icon/mic-icon.svg"
+                        width={15}
+                        height={15}
+                        className="cursor-pointer"
+                      />
+                    </button>
+                  ) : (
+                    <button onClick={() => stopRecord()}>
+                      <Image
+                        alt="moetar"
+                        src="/images/icon/stop-audio.svg"
+                        width={15}
+                        height={15}
+                        className="cursor-pointer"
+                      />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

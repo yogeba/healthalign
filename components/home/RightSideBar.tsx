@@ -114,14 +114,14 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1 }}
-          className="items-center justify-center hidden w-full h-full md:flex"
+          className="items-center justify-center flex-shrink-0 hidden w-full h-full md:flex"
         >
           <Image
             alt="moetar"
             src="/images/image/fotor-poster.png"
             width={1024}
             height={707}
-            className="w-auto h-auto"
+            className="w-auto h-auto flex-shrink-0 lg:w-[1024px] lg:h-[707px]"
           />
         </motion.div>
       ) : (

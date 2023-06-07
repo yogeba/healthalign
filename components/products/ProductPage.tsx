@@ -184,7 +184,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
                           key={index}
                           style={{ height: `${value}px` }}
                           className={`w-[22px] text-[8px] cursor-pointer font-semibold font-Poppins flex items-end justify-center py-1.5  rounded-full ${
-                            isSelected
+                            productData.grade.split("")[0] === title
                               ? "bg-[#00A02C] text-white"
                               : "bg-[#F3F3F3] text-[#A8A8A8]"
                           }`}

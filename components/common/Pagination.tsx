@@ -5,7 +5,14 @@ const Pagination: React.FC<{
   itemsPerPage: number;
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
-}> = ({ totalItems, itemsPerPage, currentPage, setCurrentPage }) => {
+  onPageChange: any;
+}> = ({
+  totalItems,
+  itemsPerPage,
+  currentPage,
+  setCurrentPage,
+  onPageChange,
+}) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const pageNumbers = [];
 
@@ -15,24 +22,27 @@ const Pagination: React.FC<{
 
   const handleClick = (page: number) => {
     setCurrentPage(page);
+    onPageChange();
   };
 
   const handlePreviousClick = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
+      onPageChange();
     }
   };
 
   const handleNextClick = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
+      onPageChange();
     }
   };
 
   return (
     <div className="flex flex-wrap justify-center md:flex-nowrap">
       <button
-        className="p-3 rounded-md bg-[#00A02C] mr-6"
+        className="p-2 md:p-3 rounded-md bg-[#00A02C] mr-6"
         onClick={handlePreviousClick}
         disabled={currentPage === 1}
       >
@@ -57,7 +67,7 @@ const Pagination: React.FC<{
         </button>
       ))}
       <button
-        className="p-3 rounded-md bg-[#00A02C] ml-6"
+        className="p-2 md:p-3 rounded-md bg-[#00A02C] md:ml-6"
         onClick={handleNextClick}
         disabled={currentPage === totalPages}
       >

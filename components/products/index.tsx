@@ -37,7 +37,6 @@ const ProductsPage: React.FC<ProductPageProps> = ({
     };
   }, []);
 
-  console.log(isScrolling, "isScrolling isScrolling");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<string>(
     supplymentData[0] ?? "all"
@@ -71,6 +70,12 @@ const ProductsPage: React.FC<ProductPageProps> = ({
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = productsData.slice(indexOfFirstItem, indexOfLastItem);
 
+  const handlePageChange = () => {
+    if (scrollableDivRef.current) {
+      scrollableDivRef.current.scrollTop = 0;
+    }
+  };
+
   return (
     <div className="relative flex flex-col w-full h-full">
       <div className="absolute bottom-0 z-40 flex justify-center w-full mx-auto">
@@ -78,7 +83,7 @@ const ProductsPage: React.FC<ProductPageProps> = ({
           initial={{ y: 100 }}
           animate={{ y: 0 }}
           transition={{ duraion: 2 }}
-          className={` pt-5 pb-3 px-10  transition-all duration-[400ms] ${
+          className={` pt-5 pb-3 px-4 md:px-10  transition-all duration-[400ms] ${
             isScrolling
               ? "bg-[#FCF6FF] rounded-t-[32px] shadow-[0px_-2px_22px_0px_#00000040]"
               : "bg-white"
@@ -89,6 +94,7 @@ const ProductsPage: React.FC<ProductPageProps> = ({
             itemsPerPage={itemsPerPage}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
+            onPageChange={() => handlePageChange()}
           />
         </motion.div>
       </div>
@@ -176,9 +182,7 @@ const ProductsPage: React.FC<ProductPageProps> = ({
                 >
                   {currentItems.length > 0 &&
                     currentItems.map((item, index) => {
-                      console.log(item, "inside map");
                       const { available, title, images } = item;
-                      console.log(images, "images list");
                       // let cleanedImageUrl = image_url;
                       // if (image_url.startsWith("//")) {
                       //   cleanedImageUrl = cleanedImageUrl.replace(/^\/\//, "");
