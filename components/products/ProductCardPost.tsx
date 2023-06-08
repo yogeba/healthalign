@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { MARKETPLACE } from "constants/marketplace";
-import { Product } from "types/searchProduct";
 import useReadMore from "components/hooks/ReadMore";
 
 const initialWordCount = 150;
@@ -30,12 +28,6 @@ const ProductCardPost: React.FC<ProductCardPostProps> = ({
     visible: { scale: 1, y: 0, opacity: 1 },
   };
 
-  const getProductMarketplace = (product: Product) => {
-    return product?.request_domain === "amazon.com"
-      ? MARKETPLACE.AMAZON
-      : MARKETPLACE.SHOPIFY;
-  };
-
   const handleNextClick = async () => {
     console.log("clicked next", data.id);
     const id = data.ASIN;
@@ -43,19 +35,20 @@ const ProductCardPost: React.FC<ProductCardPostProps> = ({
 
     // Redirect to "/products" with parameters using the Router
     router.push({
-      pathname: "/new/product",
+      pathname: "/product",
       query: { id },
     });
   };
 
   return (
     <motion.div
-      className="relative mx-8 md:mx-[50px] rounded-[28px] py-[24px] max-w-5xl lg:w-[900px] px-8 flex items-center gap-10 cursor-pointer justify-between shadow-[0px_0px_7px_0px_#00000029] bg-white h-full"
+      className="relative mx-8 md:mx-[50px] rounded-[28px] py-4 md:py-[24px] max-w-5xl lg:w-[900px] px-4 md:px-8 flex items-center gap-10 cursor-pointer justify-between shadow-[0px_0px_7px_0px_#00000029] bg-white h-full"
       variants={zooInVariants}
       initial="hidden"
       animate="visible"
       exit="hidden"
       transition={{ duration: 1 }}
+      onClick={() => handleNextClick()}
       onMouseEnter={() => setisHovered(true)}
       onMouseLeave={() => setisHovered(false)}
     >
@@ -67,7 +60,7 @@ const ProductCardPost: React.FC<ProductCardPostProps> = ({
             // src={image}
             width={152}
             height={152}
-            className="h-[60px] w-[60px] md:h-[152px] md:w-[152px]"
+            className="h-[100px] w-[80px] md:h-[150px] md:w-[100px]"
           />
         </div>
         <div className="relative flex justify-start flex-grow">

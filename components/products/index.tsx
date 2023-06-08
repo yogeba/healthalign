@@ -16,6 +16,7 @@ const ProductsPage: React.FC<ProductPageProps> = ({
 }) => {
   const [isScrolling, setIsScrolling] = useState(false);
   const scrollableDivRef = useRef<HTMLDivElement>(null);
+  const [allProductData, setAllProductData] = useState(productsData);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,6 +42,23 @@ const ProductsPage: React.FC<ProductPageProps> = ({
   const [selectedOption, setSelectedOption] = useState<string>(
     supplymentData[0] ?? "all"
   );
+
+  useEffect(() => {
+    if (selectedOption !== "all") {
+      const fetchData = async () => {
+        const apiUrl = `api/search?searchQuery=${selectedOption}`;
+        try {
+          const response = await fetch(apiUrl);
+          const data = await response.json();
+          setAllProductData(data);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+      fetchData();
+    }
+  }, [selectedOption]);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -68,7 +86,7 @@ const ProductsPage: React.FC<ProductPageProps> = ({
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = productsData.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = allProductData.slice(indexOfFirstItem, indexOfLastItem);
 
   const handlePageChange = () => {
     if (scrollableDivRef.current) {
@@ -78,26 +96,28 @@ const ProductsPage: React.FC<ProductPageProps> = ({
 
   return (
     <div className="relative flex flex-col w-full h-full">
-      <div className="absolute bottom-0 z-40 flex justify-center w-full mx-auto">
-        <motion.div
-          initial={{ y: 100 }}
-          animate={{ y: 0 }}
-          transition={{ duraion: 2 }}
-          className={` pt-5 pb-3 px-4 md:px-10  transition-all duration-[400ms] ${
-            isScrolling
-              ? "bg-[#FCF6FF] rounded-t-[32px] shadow-[0px_-2px_22px_0px_#00000040]"
-              : "bg-white"
-          }`}
-        >
-          <Pagination
-            totalItems={productsData.length}
-            itemsPerPage={itemsPerPage}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            onPageChange={() => handlePageChange()}
-          />
-        </motion.div>
-      </div>
+      {allProductData.length > 0 && (
+        <div className="absolute bottom-0 z-40 flex justify-center w-full mx-auto">
+          <motion.div
+            initial={{ y: 100 }}
+            animate={{ y: 0 }}
+            transition={{ duraion: 2 }}
+            className={` pt-5 pb-3 px-4 md:px-10  transition-all duration-[400ms] ${
+              isScrolling
+                ? "bg-[#FCF6FF] rounded-t-[32px] shadow-[0px_-2px_22px_0px_#00000040]"
+                : "bg-white"
+            }`}
+          >
+            <Pagination
+              totalItems={allProductData.length}
+              itemsPerPage={itemsPerPage}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              onPageChange={() => handlePageChange()}
+            />
+          </motion.div>
+        </div>
+      )}
       <div className="">
         <CommonHeader />
       </div>
@@ -113,7 +133,7 @@ const ProductsPage: React.FC<ProductPageProps> = ({
                   initial={{ y: -50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="w-full relative max-w-[900px]"
+                  className="w-full relative md:w-[900px] max-w-[900px]"
                 >
                   <hr className="sm:border sm:border-[#0000001F]" />
                   <div className="absolute  -top-2.5 w-full flex sm:justify-center">
@@ -178,20 +198,11 @@ const ProductsPage: React.FC<ProductPageProps> = ({
                 </motion.div>
                 <div
                   ref={scrollableDivRef}
-                  className="flex relative flex-col gap-10 py-1.5 max-h-[76vh] overflow-auto scrollbar-thin"
+                  className="flex relative flex-col gap-10 py-1.5 max-h-[76vh] overflow-auto scrollbar-thin h-[75vh]"
                 >
-                  {currentItems.length > 0 &&
+                  {currentItems.length > 0 ? (
                     currentItems.map((item, index) => {
                       const { available, title, images } = item;
-                      // let cleanedImageUrl = image_url;
-                      // if (image_url.startsWith("//")) {
-                      //   cleanedImageUrl = cleanedImageUrl.replace(/^\/\//, "");
-                      // }
-                      // if (!cleanedImageUrl.startsWith("https://")) {
-                      //   cleanedImageUrl = `https://${cleanedImageUrl}`;
-                      // } else {
-                      //   cleanedImageUrl = cleanedImageUrl;
-                      // }
                       return (
                         <ProductCardPost
                           key={index}
@@ -203,7 +214,12 @@ const ProductsPage: React.FC<ProductPageProps> = ({
                           image={images.length > 0 && images[0].url}
                         />
                       );
-                    })}
+                    })
+                  ) : (
+                    <div className="font-bold font-Poppins ">
+                      No product found
+                    </div>
+                  )}
                 </div>
               </div>
             </AnimatePresence>

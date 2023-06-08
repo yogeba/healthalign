@@ -51,9 +51,25 @@ function HomePage() {
     }
   }, [allSupplementNames]);
 
-  useEffect(() => {
+  /*  useEffect(() => {
+    console.log(allSupplementNames, "allSupplementNames");
     extractSupplementNames(generatedBios);
-  }, [generatedBios]);
+    if (typeof window !== "undefined" && generatedBios.length > 0) {
+      console.log(generatedBios, "generatedBios");
+      localStorage.setItem("resultData", JSON.stringify(generatedBios));
+    }
+  }, [allSupplementNames]); */
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const resultData: string | null = localStorage.getItem("resultData");
+      const data: string = resultData ? JSON.parse(resultData) : "";
+
+      if (data.length > 0) {
+        setGeneratedBios(data);
+      }
+    }
+  }, []);
 
   const toggleDivVisibility = () => {
     setIsSidebarVisible((prevVisible) => !prevVisible);

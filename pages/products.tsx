@@ -1,27 +1,54 @@
-// pages/products.tsx
-
 import React, { useEffect, useState } from "react";
-import ProductList from "../components/ProductList";
+import { GetServerSideProps, NextPage } from "next";
+import ProductsPage from "components/products";
 
-const Products = () => {
-  const [products, setProducts] = useState([]);
+interface ProductsProps {
+  products: any[]; // Adjust the type of products based on your API response
+}
 
+const Products: NextPage<ProductsProps> = ({ products }) => {
+  const [supplymentData, setSupplymentData] = useState<string[]>([]);
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch("/api/rye?query=supplement");
-      const data = await res.json();
-      setProducts(data.products);
-    };
-
-    fetchData();
+    if (typeof window !== "undefined") {
+      const suplymentData = localStorage.getItem("supplementNames");
+      if (suplymentData) {
+        console.log(supplymentData);
+        setSupplymentData(JSON.parse(suplymentData || ""));
+      }
+    }
   }, []);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Products</h1>
-      <ProductList products={products} />
-    </div>
+    <main>
+      <ProductsPage productsData={products} supplymentData={supplymentData} />
+    </main>
   );
+};
+
+export const getServerSideProps: GetServerSideProps<ProductsProps> = async ({
+  req,
+}) => {
+  const host = req.headers.host;
+  // const apiUrl = `http://${host}/api/search?searchQuery=supplement`;
+  const apiUrl = `http://${host}/api/search?searchQuery=supplement`;
+
+  try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+
+    return {
+      props: {
+        products: data,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return {
+      props: {
+        products: [],
+      },
+    };
+  }
 };
 
 export default Products;

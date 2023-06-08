@@ -13,7 +13,7 @@ const ProductsOptions: React.FC<PrductOptionsProps> = ({ optionsList }) => {
   useEffect(() => {
     // const host = req.headers.host;
     const fetchData = async () => {
-      const apiUrl = `api/search?searchQuery=supplement`;
+      const apiUrl = `api/search?searchQuery=${selectedFilter}`;
       try {
         const response = await fetch(apiUrl);
         const data = await response.json();
@@ -23,14 +23,14 @@ const ProductsOptions: React.FC<PrductOptionsProps> = ({ optionsList }) => {
       }
     };
     fetchData();
-  }, []);
+  }, [selectedFilter]);
 
   const individualProductClick = (data: any) => {
     const id = data.ASIN;
 
     // Redirect to "/products" with parameters using the Router
     router.push({
-      pathname: "/new/product",
+      pathname: "/product",
       query: { id },
     });
   };
@@ -74,7 +74,7 @@ const ProductsOptions: React.FC<PrductOptionsProps> = ({ optionsList }) => {
           className="pt-[23px] mx-auto"
         >
           <div className="flex flex-shrink-0 w-full overflow-x-auto h-full pb-3 max-w-[80vw] lg:max-w-[1024px] gap-5 scrollbar-thin">
-            {allProductData.length > 0 &&
+            {allProductData.length > 0 ? (
               allProductData.map((item: any, index: number) => {
                 const { description, images, title, grade } = item;
 
@@ -108,15 +108,18 @@ const ProductsOptions: React.FC<PrductOptionsProps> = ({ optionsList }) => {
                       </div>
                     </div>
                     <div className="flex items-center gap-5">
-                      <div className="h-[16px] w-[16px]  md:h-[26px] cursor-pointer absolute right-1.5 rounded-full bottom-1.5 p-0.5 md:w-[26px] bg-[#00A02C]">
-                        <div className=" text-[4.5px] sm:text-[5px] md:text-[6px] font-bold font-Poppins rounded-full flex justify-center items-center h-full border border-white text-white">
+                      <div className="h-[16px] w-[16px]  md:h-[30px] cursor-pointer absolute right-1.5 rounded-full bottom-1.5 p-0.5 md:w-[30px] bg-[#00A02C]">
+                        <div className=" text-[4.5px] sm:text-[5px] md:text-[10px] font-bold font-Poppins rounded-full flex justify-center items-center h-full border border-white text-white">
                           {grade}
                         </div>
                       </div>
                     </div>
                   </div>
                 );
-              })}
+              })
+            ) : (
+              <div className="font-bold font-Poppins ">No product found</div>
+            )}
           </div>
         </motion.div>
       </motion.div>

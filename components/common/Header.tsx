@@ -70,7 +70,7 @@ function CommonHeader() {
             </div>
           </div> */}
           <div className="w-[35px] md:w-[40px] h-[35px] md:h-[40px] border rounded-full flex justify-center items-center flex-shrink-0">
-            <Link href="/new/products">
+            <Link href="/products">
               <Image
                 alt="moetar"
                 src="/images/icon/header-shop.svg"

@@ -41,10 +41,6 @@ const LeftSideBar: React.FC<BodyProps> = ({
     if (typeof searchItem === "string" && searchItem.length > 0) {
       setIsSidebarVisible(false);
       generateBio(e);
-    } else {
-      setIsSidebarVisible(false);
-      setSearchValue("this is test data");
-      setGeneratedBios("This is test data");
     }
   };
   const generateBio = async (e: any) => {
@@ -91,57 +87,53 @@ const LeftSideBar: React.FC<BodyProps> = ({
   });
 
   const startrecord = async () => {
-    setIsRecording(true);
-    recorder
-      .start()
-      .then(() => {
-        // something else
-      })
-      .catch((e: any) => {
-        console.error(e);
-      });
-
+    // setIsRecording(true);
+    // recorder
+    //   .start()
+    //   .then(() => {
+    //     // something else
+    //   })
+    //   .catch((e: any) => {
+    //     console.error(e);
+    //   });
     // Once you are done singing your best song, stop and get the mp3.
   };
 
   const stopRecord = async () => {
-    setIsRecording(false);
-    recorder
-      .stop()
-      .getMp3()
-      .then(async ([buffer, blob]: any) => {
-        // do what ever you want with buffer and blob
-        // Example: Create a mp3 file and play
-        const file = new File(buffer, "voice.mp3", {
-          type: blob.type,
-          lastModified: Date.now(),
-        });
-
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("model", "whisper-1");
-        formData.append("response_format", "json");
-        formData.append("temperature", "0");
-        formData.append("language", "en");
-
-        // Set the API endpoint and headers
-        const apiUrl = "https://api.openai.com/v1/audio/transcriptions";
-        const headers = {
-          Accept: "application/json",
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        };
-
-        // Send the request to the Whisper API
-        const res = await axios.post(apiUrl, formData, { headers });
-        if (res?.data?.text) {
-          console.log(res?.data?.text);
-          setIsRecording(false);
-        }
-      })
-      .catch((e: any) => {
-        alert("We could not retrieve your message");
-        console.log(e);
-      });
+    // setIsRecording(false);
+    // recorder
+    //   .stop()
+    //   .getMp3()
+    //   .then(async ([buffer, blob]: any) => {
+    //     // do what ever you want with buffer and blob
+    //     // Example: Create a mp3 file and play
+    //     const file = new File(buffer, "voice.mp3", {
+    //       type: blob.type,
+    //       lastModified: Date.now(),
+    //     });
+    //     const formData = new FormData();
+    //     formData.append("file", file);
+    //     formData.append("model", "whisper-1");
+    //     formData.append("response_format", "json");
+    //     formData.append("temperature", "0");
+    //     formData.append("language", "en");
+    //     // Set the API endpoint and headers
+    //     const apiUrl = "https://api.openai.com/v1/audio/transcriptions";
+    //     const headers = {
+    //       Accept: "application/json",
+    //       Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+    //     };
+    //     // Send the request to the Whisper API
+    //     const res = await axios.post(apiUrl, formData, { headers });
+    //     if (res?.data?.text) {
+    //       console.log(res?.data?.text);
+    //       setIsRecording(false);
+    //     }
+    //   })
+    //   .catch((e: any) => {
+    //     alert("We could not retrieve your message");
+    //     console.log(e);
+    //   });
   };
   return (
     <div className="flex items-center justify-center">
@@ -187,7 +179,7 @@ const LeftSideBar: React.FC<BodyProps> = ({
                 value={searchItem ?? ""}
                 onChange={(e) => setSearchItem(e.target.value)}
                 rows={6}
-                className="w-full my-5 border-gray-300 shadow-sm resize-none rounded-2xl focus:border-black focus:ring-black scrollbar-thin"
+                className="w-full py-3 pl-4 my-5 border-gray-300 shadow-sm resize-none rounded-2xl focus:border-black placeholder:text-gray-400 focus:ring-black scrollbar-thin"
                 placeholder={
                   "Enter a Health Topic, e.g Diabetes, Depression, or heart Disease..."
                 }

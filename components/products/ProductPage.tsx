@@ -155,7 +155,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
                     >
                       Labdoor Score
                     </motion.button>
-                    <motion.button
+                    {/* <motion.button
                       initial="initial"
                       animate={isSelectedTabCertification ? "animate" : "exit"}
                       transition={{ duration: 0.5 }}
@@ -168,7 +168,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
                       }`}
                     >
                       certifications
-                    </motion.button>
+                    </motion.button> */}
                   </motion.div>
                   <div className="flex justify-center w-full ">
                     <PerformanceCircle performance={productData?.score} />

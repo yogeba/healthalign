@@ -62,7 +62,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
   const generateBio = async (e: any) => {
     e.preventDefault();
     setSearchValue(updatedSearchValue);
-    setGeneratedBios("null");
+    setGeneratedBios("");
     // setLoading(true);
     const response = await fetch("/api/generate", {
       method: "POST",
@@ -126,7 +126,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
         </motion.div>
       ) : (
         <div className="relative w-full h-full">
-          <div className="max-h-[78vh] md:max-h-[90vh]  relative h-full w-full overflow-auto scrollbar-thin">
+          <div className="max-h-[78vh] md:max-h-[90vh] relative h-full w-full overflow-auto scrollbar-thin">
             {generatedBios && (
               <AnimatePresence mode="wait">
                 <motion.div
@@ -150,7 +150,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                           {typeof searchValue === "string" ? searchValue : ""}
                         </p>
                       </div>
-                      <button
+                      {/* <button
                         onClick={() =>
                           setUpdatedSearchValue(
                             typeof searchValue === "string" ? searchValue : ""
@@ -165,7 +165,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                           height={10}
                           className="-mt-1 -mr-0.5 cursor-pointer"
                         />
-                      </button>
+                      </button> */}
                     </motion.div>
                   )}
                   {generatedBios

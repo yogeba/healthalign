@@ -1,35 +1,49 @@
-// pages/products.tsx
+import React from "react";
+import ProductPage from "components/products/ProductPage";
+import { GetServerSideProps, NextPage } from "next";
+import { fetchProduct } from "lib/products";
+import { MARKETPLACE } from "constants/marketplace";
 
-import React, { useEffect, useState } from "react";
-import SearchProductList from "components/SearchProductList";
-import { useRouter } from "next/router";
+type IndividualProductProps = {
+  individualProductData: any[];
+};
 
-const ProductPage = () => {
-  const router = useRouter();
-  const query = router.query;
-  const [product, setProduct] = useState([]);
-
-  const fetchData = async () => {
-    if (!query.id) return;
-    const res = await fetch(`/api/product?id=${query.id}`);
-    const product = await res.json();
-    setProduct(product);
-  };
-
-  useEffect(() => {
-    if (!query) return;
-
-    fetchData();
-  }, [query]);
-
+const IndividualProduct: NextPage<IndividualProductProps> = ({
+  individualProductData,
+}) => {
+  console.log(individualProductData, "individualProductData");
+  // Rest of your component code...
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Product Page</h1>
-      <h1 className="text-2xl font-bold mb-4">{JSON.stringify(product)}</h1>
-
-      {/* <SearchProductList products={products} /> */}
-    </div>
+    <main>
+      <ProductPage productData={individualProductData} />
+    </main>
   );
 };
 
-export default ProductPage;
+export const getServerSideProps: GetServerSideProps<
+  IndividualProductProps
+> = async (context) => {
+  const { query, req } = context;
+  const { id } = query;
+  const host = req.headers.host;
+
+  let productInfo;
+  try {
+    const response = await fetch(`http://${host}/api/product?id=${id}`);
+    if (response.ok) {
+      productInfo = await response.json();
+    } else {
+      throw new Error("API request failed");
+    }
+  } catch (e) {
+    console.log("CAUGHT ERROR ON PRODUCT, requested by URL");
+  }
+
+  return {
+    props: {
+      individualProductData: productInfo,
+    },
+  };
+};
+
+export default IndividualProduct;
