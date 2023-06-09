@@ -21,7 +21,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ generatedBio }) => {
       // variants={zoomOutVariants}
       initial="hidden"
       animate="visible"
-      exit="hidden"
+      // exit="hidden"
       transition={{ duration: 1 }}
     >
       <div className="flex flex-col w-full h-full gap-3 py-6">

@@ -4,6 +4,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import ProductsOptions from "./ProductsOptions";
 import ResultCard from "components/common/ResultCard";
 import ChatResultCard from "components/common/ChatResultCard";
+import MicRecorder from "mic-recorder-to-mp3";
+import axios from "axios";
+
+const recorder = new MicRecorder({
+  bitRate: 128,
+});
 
 interface RightSideBarProps {
   generatedBios: string;
@@ -22,8 +28,11 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
   setSearchValue,
   allSupplementNames,
 }) => {
+  const [isRecording, setIsRecording] = useState(false);
   const [isShopSelected, setIsShopSelected] = useState(false);
   const [updatedSearchValue, setUpdatedSearchValue] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [resultData, setResultData] = useState<any>("");
   const zoomInVariants = {
     hidden: { scale: 0, y: 400, opacity: 0 },
     visible: { scale: 1, y: 0, opacity: 1 },
@@ -63,7 +72,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
     e.preventDefault();
     setSearchValue(updatedSearchValue);
     setGeneratedBios("");
-    // setLoading(true);
+    setLoading(true);
     const response = await fetch("/api/generate", {
       method: "POST",
       headers: {
@@ -87,16 +96,84 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
     const decoder = new TextDecoder();
     let done = false;
 
+    let accumulatedResult = ""; // Variable to accumulate the chunk values
+
     while (!done) {
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
       const chunkValue = decoder.decode(value);
       setGeneratedBios((prev) => {
-        console.log(prev + chunkValue);
         return prev + chunkValue;
       });
+      accumulatedResult += chunkValue; // Accumulate the chunk values
     }
-    // setLoading(false);
+
+    setResultData(accumulatedResult);
+    setLoading(false);
+  };
+
+  const startRecord = async () => {
+    setIsRecording(true);
+    recorder
+      .start()
+      .then(() => {
+        // Do something else
+      })
+      .catch((e: any) => {
+        console.error(e);
+      });
+  };
+
+  useEffect(() => {
+    if (!loading) {
+      if (typeof window !== "undefined" && resultData !== "") {
+        const result = { resultData, question: "This is question" };
+        localStorage.setItem("resultData", JSON.stringify(result));
+      }
+    }
+  }, [loading]);
+
+  const stopRecord = async () => {
+    setIsRecording(false);
+    recorder
+      .stop()
+      .getMp3()
+      .then(async ([buffer, blob]: any) => {
+        const file = new File(buffer, "voice.mp3", {
+          type: blob.type,
+          lastModified: Date.now(),
+        });
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("model", "whisper-1");
+        formData.append("response_format", "json");
+        formData.append("temperature", "0");
+        formData.append("language", "en");
+
+        const apiUrl = "https://api.openai.com/v1/audio/transcriptions";
+        const headers = {
+          Accept: "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
+        };
+
+        console.log(formData);
+
+        const res = await axios.post(apiUrl, formData, { headers });
+        setUpdatedSearchValue(res.data.text);
+
+        /* const response = await fetch("/api/whisper", {
+          method: "POST",
+          body: formData,
+        });
+        const text = await response.json();
+        console.log(text, "texttexttexttexttexttexttexttext"); 
+        console.log({ whisper: text });*/
+      })
+      .catch((e: any) => {
+        alert("We could not retrieve your message");
+        console.log(e);
+      });
   };
 
   useEffect(() => {
@@ -119,9 +196,9 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
           <Image
             alt="moetar"
             src="/images/image/fotor-poster.png"
-            width={1024}
-            height={707}
-            className="w-auto h-auto flex-shrink-0 lg:w-[1024px] lg:h-[707px]"
+            width={800}
+            height={800}
+            className="w-auto h-auto flex-shrink-0 "
           />
         </motion.div>
       ) : (
@@ -260,13 +337,27 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                         : "border-[#00000061] bg-white"
                     }`}
                   >
-                    <Image
-                      alt="moetar"
-                      src={`/images/icon/mic-icon.svg`}
-                      width={20}
-                      height={20}
-                      className="h-[14px] w-[14px] md:h-5 md:w-5"
-                    />
+                    {!isRecording ? (
+                      <div onClick={() => startRecord()}>
+                        <Image
+                          alt="moetar"
+                          src="/images/icon/mic-icon.svg"
+                          width={15}
+                          height={15}
+                          className="cursor-pointer"
+                        />
+                      </div>
+                    ) : (
+                      <div onClick={() => stopRecord()}>
+                        <Image
+                          alt="moetar"
+                          src="/images/icon/stop-audio.svg"
+                          width={15}
+                          height={15}
+                          className="cursor-pointer"
+                        />
+                      </div>
+                    )}
                   </div>
                   <div className="absolute hidden right-5 md:block">
                     <div className="flex items-center justify-end gap-3 mx-4">
@@ -286,13 +377,27 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                       </label>
 
                       <div className="cursor-pointer">
-                        <Image
-                          alt="moetar"
-                          src="/images/icon/mic-icon.svg"
-                          width={15}
-                          height={15}
-                          className="cursor-pointer"
-                        />
+                        {!isRecording ? (
+                          <div onClick={() => startRecord()}>
+                            <Image
+                              alt="moetar"
+                              src="/images/icon/mic-icon.svg"
+                              width={15}
+                              height={15}
+                              className="cursor-pointer"
+                            />
+                          </div>
+                        ) : (
+                          <div onClick={() => stopRecord()}>
+                            <Image
+                              alt="moetar"
+                              src="/images/icon/stop-audio.svg"
+                              width={15}
+                              height={15}
+                              className="cursor-pointer"
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

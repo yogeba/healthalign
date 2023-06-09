@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import LoadingDots from "../LoadingDots";
 import axios from "axios";
-const MicRecorder = require("mic-recorder-to-mp3");
+// const MicRecorder = require("mic-recorder-to-mp3");
+import MicRecorder from "mic-recorder-to-mp3";
+
+const recorder = new MicRecorder({
+  bitRate: 128,
+});
 
 interface BodyProps {
   setGeneratedBios: React.Dispatch<React.SetStateAction<string>>;
@@ -19,7 +24,7 @@ const LeftSideBar: React.FC<BodyProps> = ({
   const [searchItem, setSearchItem] = useState<string | null>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [isRecording, setIsRecording] = useState(false);
-
+  const [resultData, setResultData] = useState<any>("");
   const prompt = `As Andrew Huberman, provide low-cost, low-risk, and high-output information and solutions on the following health-related questions about ${searchItem}:
       1. What is ${searchItem}? Provide a brief definition and overview.
       2. What are the main signs and symptoms of ${searchItem}? List at least 5.
@@ -69,6 +74,7 @@ const LeftSideBar: React.FC<BodyProps> = ({
     const reader = data.getReader();
     const decoder = new TextDecoder();
     let done = false;
+    let accumulatedResult = ""; // Variable to accumulate the chunk values
 
     while (!done) {
       const { value, done: doneReading } = await reader.read();
@@ -77,63 +83,78 @@ const LeftSideBar: React.FC<BodyProps> = ({
       setGeneratedBios((prev) => {
         return prev + chunkValue;
       });
+      accumulatedResult += chunkValue; // Accumulate the chunk values
     }
+
+    // Update the state with the accumulated result
+    setResultData(accumulatedResult);
 
     setLoading(false);
   };
 
-  const recorder = new MicRecorder({
-    bitRate: 128,
-  });
+  useEffect(() => {
+    if (!loading) {
+      if (typeof window !== "undefined" && resultData !== "") {
+        const result = { resultData, question: "This is question" };
+        localStorage.setItem("resultData", JSON.stringify(result));
+      }
+    }
+  }, [loading]);
 
-  const startrecord = async () => {
-    // setIsRecording(true);
-    // recorder
-    //   .start()
-    //   .then(() => {
-    //     // something else
-    //   })
-    //   .catch((e: any) => {
-    //     console.error(e);
-    //   });
-    // Once you are done singing your best song, stop and get the mp3.
+  const startRecord = async () => {
+    setIsRecording(true);
+    recorder
+      .start()
+      .then(() => {
+        // Do something else
+      })
+      .catch((e: any) => {
+        console.error(e);
+      });
   };
 
   const stopRecord = async () => {
-    // setIsRecording(false);
-    // recorder
-    //   .stop()
-    //   .getMp3()
-    //   .then(async ([buffer, blob]: any) => {
-    //     // do what ever you want with buffer and blob
-    //     // Example: Create a mp3 file and play
-    //     const file = new File(buffer, "voice.mp3", {
-    //       type: blob.type,
-    //       lastModified: Date.now(),
-    //     });
-    //     const formData = new FormData();
-    //     formData.append("file", file);
-    //     formData.append("model", "whisper-1");
-    //     formData.append("response_format", "json");
-    //     formData.append("temperature", "0");
-    //     formData.append("language", "en");
-    //     // Set the API endpoint and headers
-    //     const apiUrl = "https://api.openai.com/v1/audio/transcriptions";
-    //     const headers = {
-    //       Accept: "application/json",
-    //       Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-    //     };
-    //     // Send the request to the Whisper API
-    //     const res = await axios.post(apiUrl, formData, { headers });
-    //     if (res?.data?.text) {
-    //       console.log(res?.data?.text);
-    //       setIsRecording(false);
-    //     }
-    //   })
-    //   .catch((e: any) => {
-    //     alert("We could not retrieve your message");
-    //     console.log(e);
-    //   });
+    setIsRecording(false);
+    console.log(process.env.MONGODB_URI, "test data");
+    recorder
+      .stop()
+      .getMp3()
+      .then(async ([buffer, blob]: any) => {
+        const file = new File(buffer, "voice.mp3", {
+          type: blob.type,
+          lastModified: Date.now(),
+        });
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("model", "whisper-1");
+        formData.append("response_format", "json");
+        formData.append("temperature", "0");
+        formData.append("language", "en");
+
+        const apiUrl = "https://api.openai.com/v1/audio/transcriptions";
+        const headers = {
+          Accept: "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
+        };
+
+        console.log(formData);
+
+        const res = await axios.post(apiUrl, formData, { headers });
+        setSearchItem(res.data.text);
+
+        /* const response = await fetch("/api/whisper", {
+          method: "POST",
+          body: formData,
+        });
+        const text = await response.json();
+        console.log(text, "texttexttexttexttexttexttexttext"); 
+        console.log({ whisper: text });*/
+      })
+      .catch((e: any) => {
+        alert("We could not retrieve your message");
+        console.log(e);
+      });
   };
   return (
     <div className="flex items-center justify-center">
@@ -198,7 +219,7 @@ const LeftSideBar: React.FC<BodyProps> = ({
                   </label>
 
                   {!isRecording ? (
-                    <button onClick={() => startrecord()}>
+                    <button onClick={() => startRecord()}>
                       <Image
                         alt="moetar"
                         src="/images/icon/mic-icon.svg"

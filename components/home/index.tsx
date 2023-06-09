@@ -51,28 +51,29 @@ function HomePage() {
     }
   }, [allSupplementNames]);
 
-  /*  useEffect(() => {
-    console.log(allSupplementNames, "allSupplementNames");
+  useEffect(() => {
     extractSupplementNames(generatedBios);
-    if (typeof window !== "undefined" && generatedBios.length > 0) {
-      console.log(generatedBios, "generatedBios");
-      localStorage.setItem("resultData", JSON.stringify(generatedBios));
-    }
-  }, [allSupplementNames]); */
+  }, [generatedBios]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const resultData: string | null = localStorage.getItem("resultData");
-      const data: string = resultData ? JSON.parse(resultData) : "";
-
-      if (data.length > 0) {
-        setGeneratedBios(data);
+      const data: any =
+        resultData !== "undefined" && resultData ? JSON.parse(resultData) : "";
+      if (data) {
+        if (data.resultData.length > 0 && data.question.length > 0) {
+          setGeneratedBios(data?.resultData);
+          setSearchValue(data.question);
+        }
       }
     }
   }, []);
 
   const toggleDivVisibility = () => {
     setIsSidebarVisible((prevVisible) => !prevVisible);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("visibility", JSON.stringify(!isSidebarVisible));
+    }
   };
 
   const leftSidebarAnimation = {
