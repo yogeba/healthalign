@@ -125,20 +125,24 @@ function HomePage() {
               {generatedBios.length > 0 && (
                 <button
                   onClick={toggleDivVisibility}
-                  className="absolute hidden lg:block left-0 z-10 w-8 h-10 bg-[#4DAF00] text-white rounded-r-full cursor-pointer top-1/2"
+                  className={`absolute hidden lg:flex justify-center items-center z-10 w-[50px] h-[50px] text-white rounded-md cursor-pointer top-2  ${
+                    isSidebarVisible
+                      ? "bg-[#4DAF00] left-2"
+                      : "border-2 border-[#00000061] left-8"
+                  }`}
                 >
                   {isSidebarVisible ? (
                     <Image
                       alt="back arrow"
-                      src="/images/icon/right-arrow.svg"
+                      src="/images/icon/side-bar-icon.svg"
                       width={25}
                       height={25}
-                      className="ml-0.5 rotate-180"
+                      className="ml-0.5 "
                     />
                   ) : (
                     <Image
                       alt="back arrow"
-                      src="/images/icon/right-arrow.svg"
+                      src="/images/icon/side-bar-icon.svg"
                       width={25}
                       height={25}
                       className="ml-0.5 "

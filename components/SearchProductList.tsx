@@ -56,14 +56,14 @@ const SearchProductList: React.FC<ProductListProps> = ({ products = [] }) => {
   }, []);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {products.map((product, index) => (
         <div
           key={product.identifier + index}
-          className="product-card bg-white shadow-md rounded p-4 flex flex-col"
+          className="flex flex-col p-4 bg-white rounded shadow-md product-card"
         >
           <img
-            className="w-full h-64 object-cover mb-4 rounded"
+            className="object-cover w-full h-64 mb-4 rounded"
             src={product?.images[0]?.url}
             alt={product.title}
           />
@@ -80,19 +80,19 @@ const SearchProductList: React.FC<ProductListProps> = ({ products = [] }) => {
                     encodeURIComponent(product.url)
                 )
               }
-              className="text-xl font-semibold mb-2 flex-1 truncate"
+              className="flex-1 mb-2 text-xl font-semibold truncate"
             >
               {product.title}
             </button>
-            {/* <p className="text-gray-700 mb-4">{product.description}</p> */}
-            <p className="text-lg font-bold mb-4 flex-1">
+            {/* <p className="mb-4 text-gray-700">{product.description}</p> */}
+            <p className="flex-1 mb-4 text-lg font-bold">
               {product.price.displayValue
                 ? "Price: $" + product.price.displayValue
                 : "Price Unavailable"}
             </p>
             {/* {product.price.displayValue && (
               <button
-                className="bg-black rounded-xl text-white font-medium px-4 py-2 mt-auto hover:bg-black/80 w-full"
+                className="w-full px-4 py-2 mt-auto font-medium text-white bg-black rounded-xl hover:bg-black/80"
                 onClick={() => handleBuyNow(product)}
                 disabled={!product.price.displayValue}
               >
@@ -101,7 +101,7 @@ const SearchProductList: React.FC<ProductListProps> = ({ products = [] }) => {
             )}
             {!product.price.displayValue && (
               <button
-                className="rounded-xl text-black font-medium px-4 py-2 mt-auto w-full bg-yellow-200"
+                className="w-full px-4 py-2 mt-auto font-medium text-black bg-yellow-200 rounded-xl"
                 onClick={() => handleBuyNow(product)}
                 disabled={!product.price.displayValue}
               >
@@ -109,13 +109,13 @@ const SearchProductList: React.FC<ProductListProps> = ({ products = [] }) => {
               </button>
             )} */}
             <button
-              className="rounded-xl text-black font-medium px-4 py-2 mt-auto w-full bg-yellow-200"
+              className="w-full px-4 py-2 mt-auto font-medium text-black rounded-xl"
               onClick={() => router.push(product.url)}
             >
-              Buy Now
+              Buy Now\
             </button>
             <button
-              className="rounded-xl text-black font-medium px-4 py-2 mt-auto w-full bg-yellow-200"
+              className="w-full px-4 py-2 mt-auto font-medium text-black rounded-xl"
               onClick={() => router.push(`/product?id=${product.identifier}`)}
             >
               View Details

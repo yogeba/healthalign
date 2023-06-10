@@ -5,6 +5,7 @@ import PerformanceCircle from "../common/PerformanceCircle";
 import CommonHeader from "../common/Header";
 import { motion } from "framer-motion";
 import PerformanceFill from "../common/PerformanceFill";
+import Link from "next/link";
 
 const alphabetTabData = [
   { title: "A", isSelected: true, value: "47" },
@@ -203,25 +204,14 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
                 className="py-8 md:py-16 flex  justify-center items-center gap-[25px] w-full"
               >
                 <button className="text-xs hover:underline border border-black rounded-full font-Poppins font-medium py-2.5 px-[60px] ">
-                  Buy Now
+                  Add to Cart
                 </button>
-                {/* <h2 className="uppercase text-base font-bold text-[#4E4E4E] font-InaiMathi text-center w-full">
+                <Link
+                  href="/checkout"
+                  className="text-xs hover:underline border border-black rounded-full font-Poppins font-medium py-2.5 px-[60px] "
+                >
                   Buy Now
-                </h2>
-                <div className="flex flex-wrap items-center justify-center gap-5">
-                  {buttonData.map((item, index) => {
-                    const { title, linkTo } = item;
-                    return (
-                      <Link
-                        href={linkTo}
-                        key={index}
-                        className="text-xs hover:underline border border-black rounded-full font-Poppins font-medium py-4 px-[37px] "
-                      >
-                        {title ?? ""}
-                      </Link>
-                    );
-                  })}
-                </div> */}
+                </Link>
               </motion.div>
               <div className="border-t w-full flex-col md:flex-row h-full border-[#00000017] flex justify-center">
                 {Array(numDivs)
@@ -251,8 +241,8 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
               </div>
             </div>
             <motion.div
-              initial={{ x: -100, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ duration: 1 }}
               className="absolute top-0 left-0 items-center hidden h-full lg:flex -z-10"
             >
@@ -266,8 +256,8 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
             </motion.div>
 
             <motion.div
-              initial={{ x: 100, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ duration: 1 }}
               className="absolute top-0 right-0 items-center hidden h-full lg:flex -z-10"
             >

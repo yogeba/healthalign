@@ -225,8 +225,8 @@ const ProductsPage: React.FC<ProductPageProps> = ({
             </AnimatePresence>
 
             <motion.div
-              initial={{ x: -100, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ duration: 1 }}
               className="absolute top-0 left-0 items-center hidden h-full lg:flex -z-10"
             >
@@ -240,8 +240,8 @@ const ProductsPage: React.FC<ProductPageProps> = ({
             </motion.div>
 
             <motion.div
-              initial={{ x: 100, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ duration: 1 }}
               className="absolute top-0 right-0 items-center hidden h-full lg:flex -z-10"
             >

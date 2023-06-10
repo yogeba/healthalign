@@ -138,8 +138,6 @@ const LeftSideBar: React.FC<BodyProps> = ({
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
         };
 
-        console.log(formData);
-
         const res = await axios.post(apiUrl, formData, { headers });
         setSearchItem(res.data.text);
 

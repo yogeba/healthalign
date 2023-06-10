@@ -1,8 +1,6 @@
 import React from "react";
 import ProductPage from "components/products/ProductPage";
 import { GetServerSideProps, NextPage } from "next";
-import { fetchProduct } from "lib/products";
-import { MARKETPLACE } from "constants/marketplace";
 
 type IndividualProductProps = {
   individualProductData: any[];
