@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
 import PerformanceCircle from "../common/PerformanceCircle";
@@ -6,6 +6,11 @@ import CommonHeader from "../common/Header";
 import { motion } from "framer-motion";
 import PerformanceFill from "../common/PerformanceFill";
 import Link from "next/link";
+import { MARKETPLACE } from "constants/marketplace";
+import { fetchProduct } from "lib/products";
+import { addCartItems, createCart } from "lib/cart";
+import { Product } from "types/searchProduct";
+import { Toaster, toast } from "react-hot-toast";
 
 const alphabetTabData = [
   { title: "A", isSelected: true, value: "47" },
@@ -34,6 +39,17 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
     setselectedImage(image);
   };
 
+  const [cartId, setCartId] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedCartId = localStorage.getItem("cartId");
+      if (savedCartId) {
+        setCartId(savedCartId);
+      }
+    }
+  }, []);
+
   const buttonVariants = {
     initial: { x: -1 },
     animate: { x: 0 },
@@ -54,6 +70,47 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
 
   // Calculate the number of divs needed based on the data length
   const numDivs = Math.ceil(performanceData.length / 4);
+
+  const addToCart = async (product: Product) => {
+    console.log(product, "product this is product data new");
+    const input = {
+      items: {
+        amazonCartItemsInput: [],
+        shopifyCartItemsInput: [],
+      },
+    };
+
+    const marketplace =
+      product?.marketplace === "AMAZON"
+        ? MARKETPLACE.AMAZON
+        : MARKETPLACE.SHOPIFY;
+    const productDetails = await fetchProduct(product.identifier, marketplace);
+
+    if (marketplace === MARKETPLACE.AMAZON) {
+      input.items.amazonCartItemsInput = [
+        { productId: product.identifier, quantity: 1 },
+      ];
+    }
+
+    if (marketplace === MARKETPLACE.SHOPIFY) {
+      input.items.shopifyCartItemsInput = [
+        { variantId: product?.variants[0]?.id, quantity: 1 },
+      ];
+    }
+
+    if (!cartId) {
+      // const { data: createCartData } = await createCart(input);
+      const createCartData = await createCart(input);
+      localStorage.setItem("cartId", createCartData.createCart.cart.id);
+      setCartId(createCartData.createCart.cart.id);
+    } else {
+      await addCartItems({ id: cartId, items: input.items });
+    }
+
+    toast.success("Product added to cart");
+
+    console.log(productDetails, "productDetails");
+  };
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -140,7 +197,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1.5 }}
-                    className="flex w-full max-w-[400px] p-1.5 mx-auto border rounded-[33px]  shad-w-[0px_0px_4px_0px_#00000040] my-3 gap-1"
+                    className="flex w-full max-w-[200px] mx-auto border rounded-[33px]  shad-w-[0px_0px_4px_0px_#00000040] my-3 gap-1"
                   >
                     <motion.button
                       initial="initial"
@@ -154,22 +211,8 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
                           : "text-[#ABABAB] bg-white"
                       }`}
                     >
-                      Labdoor Score
+                      Lab Test Score
                     </motion.button>
-                    {/* <motion.button
-                      initial="initial"
-                      animate={isSelectedTabCertification ? "animate" : "exit"}
-                      transition={{ duration: 0.5 }}
-                      variants={buttonVariants}
-                      onClick={() => setSelectedTabCertification(true)}
-                      className={`h-10 transition-color rounded-full flex justify-center items-center  w-full text-xs font-semibold font-Poppins first-letter:capitalize  ${
-                        isSelectedTabCertification
-                          ? "bg-[#00A02C] text-white"
-                          : "text-[#ABABAB] bg-white"
-                      }`}
-                    >
-                      certifications
-                    </motion.button> */}
                   </motion.div>
                   <div className="flex justify-center w-full ">
                     <PerformanceCircle performance={productData?.score} />
@@ -201,9 +244,12 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1 }}
-                className="py-8 md:py-16 flex  justify-center items-center gap-[25px] w-full"
+                className="py-8 md:py-16 flex  justify-center items-center gap-[25px] w-full flex-col sm:flex-row"
               >
-                <button className="text-xs hover:underline border border-black rounded-full font-Poppins font-medium py-2.5 px-[60px] ">
+                <button
+                  onClick={() => addToCart(productData)}
+                  className="text-xs hover:underline border border-black rounded-full font-Poppins font-medium py-2.5 px-[60px] "
+                >
                   Add to Cart
                 </button>
                 <Link
@@ -272,6 +318,11 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
           </div>
         </div>
       </div>
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        toastOptions={{ duration: 2000 }}
+      />
     </div>
   );
 };

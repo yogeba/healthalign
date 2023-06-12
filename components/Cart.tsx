@@ -135,14 +135,14 @@ const Cart: React.FC<CartProps> = ({ cartId }) => {
                 <li key={item.product?.id || item.variant?.id}>
                   {item.product?.id || item.variant?.id}: {item.quantity}
                   <img
-                    className="w-full h-48 object-cover mb-4"
+                    className="object-cover w-full h-48 mb-4"
                     src={
                       item?.product?.images[0]?.url || item?.variant?.image?.url
                     }
                     alt={item?.product?.title}
                   />
                   <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
                     onClick={() =>
                       updateQuantity(
                         item.product?.id,
@@ -154,7 +154,7 @@ const Cart: React.FC<CartProps> = ({ cartId }) => {
                     +
                   </button>
                   <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
                     onClick={() =>
                       updateQuantity(
                         item.product?.id,
@@ -166,7 +166,7 @@ const Cart: React.FC<CartProps> = ({ cartId }) => {
                     -
                   </button>
                   <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
                     onClick={() =>
                       removeItem(item.product?.id, item.variant?.id)
                     }
@@ -182,20 +182,20 @@ const Cart: React.FC<CartProps> = ({ cartId }) => {
       <h2>Total Cost {cart?.cost?.total?.displayValue || "$0"}</h2>
 
       <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
         onClick={() => updateBuyerIdentity()}
       >
         Update Customer Details
       </button>
       <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
         onClick={() => updateShippingOptions()}
       >
         Update Shipping Options
       </button>
 
       <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
         onClick={proceedToCheckout}
       >
         Proceed to Checkout

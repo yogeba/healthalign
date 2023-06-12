@@ -36,6 +36,8 @@ export interface Product {
   variants: any[];
   vendor: string;
   marketplace: string;
+  identifier: string;
+  quantity: number;
 }
 
 export type CartProps = {

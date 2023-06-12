@@ -21,6 +21,7 @@ const CustomInputField: React.FC<CustomDataFieldProps> = ({
       <input
         type={type ?? ""}
         name={name}
+        id={`custom-input-${name}`}
         value={value}
         maxLength={name === "cvv" ? 3 : undefined}
         onChange={(e) => handleChange(e)}

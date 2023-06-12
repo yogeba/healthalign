@@ -19,7 +19,7 @@ const Products: NextPage<ProductsProps> = ({ products }) => {
   }, []);
 
   return (
-    <main>
+    <main className="h-screen">
       <ProductsPage productsData={products} supplymentData={supplymentData} />
     </main>
   );

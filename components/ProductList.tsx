@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Product } from "../types";
 import { fetchProduct } from "../lib/products/fetchProduct";
 import { MARKETPLACE } from "../constants/marketplace";
 import { useRouter } from "next/router";
 import { addCartItems, createCart } from "lib/cart";
+import { Product } from "types/searchProduct";
 
 interface ProductListProps {
   products?: Product[];
 }
 const ProductList: React.FC<ProductListProps> = ({ products = [] }) => {
-  console.log(products, "products, new one");
   const [cartId, setCartId] = useState<string | null>(null);
   const router = useRouter();
 
@@ -46,7 +45,8 @@ const ProductList: React.FC<ProductListProps> = ({ products = [] }) => {
     }
 
     if (!cartId) {
-      const { data: createCartData } = await createCart(input);
+      // const { data: createCartData } = await createCart(input);
+      const createCartData = await createCart(input);
       localStorage.setItem("cartId", createCartData.createCart.cart.id);
       setCartId(createCartData.createCart.cart.id);
     } else {
@@ -55,7 +55,6 @@ const ProductList: React.FC<ProductListProps> = ({ products = [] }) => {
   };
 
   const getProductUrl = (product: Product) => {
-    console.log("TODO", product?.marketplace);
     return getProductMarketplace(product) === MARKETPLACE.SHOPIFY
       ? product.store_canonical_url + product.url
       : product?.url;

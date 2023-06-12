@@ -95,7 +95,7 @@ const ProductsPage: React.FC<ProductPageProps> = ({
   };
 
   return (
-    <div className="relative flex flex-col w-full h-full">
+    <div className="relative flex flex-col  w-full h-full">
       {allProductData.length > 0 && (
         <div className="absolute bottom-0 z-40 flex justify-center w-full mx-auto">
           <motion.div

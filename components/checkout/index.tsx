@@ -1,9 +1,10 @@
 import CustomInputField from "components/common/CustomInputFiels";
+import React, { useEffect, useRef, useState } from "react";
+import { deleteCartItems, getCartById } from "lib/cart";
 import CommonHeader from "components/common/Header";
-import React, { useRef, useState } from "react";
+import { Toaster, toast } from "react-hot-toast";
 import { motion } from "framer-motion";
 import Image from "next/image";
-
 interface formDataType {
   country: string;
   firstName: string;
@@ -14,7 +15,6 @@ interface formDataType {
   postal: string;
   phone: string;
 }
-
 interface CardFormState {
   cardNumber: string;
   expireDate: any;
@@ -22,28 +22,11 @@ interface CardFormState {
   fullName: string;
 }
 
-const cartData = [
-  {
-    id: 0,
-    name: "Nature's Bounty B-Complex With Folic Acid",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,quis nostrud exercitation ullamco laboris.",
-    price: "$45.00",
-    image: "product-option.png",
-  },
-  {
-    id: 1,
-    name: "Nature's Bounty B-Complex With Folic Acid",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,quis nostrud exercitation ullamco laboris.",
-    price: "$45.00",
-    image: "product-option.png",
-  },
-];
-
 function CheckOutPage() {
-  const [selectedProductData, setSelectedProductData] = useState(cartData);
+  const [isCartAvailable, setIsCartAvailable] = useState(false);
   const [coupenCode, setCoupenCode] = useState("");
+  const [cartId, setCartId] = useState<string>("");
+  const [cart, setCart] = useState<any>();
   const [formData, setFormData] = useState<formDataType>({
     country: "",
     firstName: "",
@@ -65,6 +48,28 @@ function CheckOutPage() {
     postal,
     phone,
   } = formData;
+
+  const fetchCartDetails = async () => {
+    const cartId = localStorage.getItem("cartId");
+
+    if (cartId) {
+      const cart = await getCartById(cartId);
+      setCart(cart);
+    }
+  };
+
+  useEffect(() => {
+    fetchCartDetails();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const existingCartId = localStorage.getItem("cartId");
+      if (existingCartId) {
+        setCartId(existingCartId);
+      }
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -110,16 +115,44 @@ function CheckOutPage() {
     }
   };
 
+  useEffect(() => {
+    setIsCartAvailable(cart?.stores?.length > 0);
+  }, [cart]);
+
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleDeleteClick = (productId: number) => {
-    setSelectedProductData((prevProducts) =>
-      prevProducts.filter((product) => product.id !== productId)
-    );
-  };
   const handleCoupenCode = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // setCoupenCode("");
+  };
+
+  const removeItem = async (productId: string, variantId: string) => {
+    const input = {
+      id: cartId,
+      items: {
+        amazonProducts: productId ? [{ productId }] : [],
+        shopifyProducts: variantId ? [{ variantId }] : [],
+      },
+    };
+
+    toast.promise(
+      deleteCartItems(input),
+      {
+        loading: "Removing product from cart...",
+        success: () => {
+          fetchCartDetails();
+          return "Product removed from cart";
+        },
+        error: (error) => {
+          return "An error occurred while removing the product";
+        },
+      },
+      {
+        loading: {
+          duration: 2000,
+        },
+      }
+    );
   };
 
   return (
@@ -127,7 +160,7 @@ function CheckOutPage() {
       <div className="sticky top-0 z-20 bg-white">
         <CommonHeader />
       </div>
-      <div className="w-full flex flex-col lg:flex-row h-full py-6 mx-auto md:py-6 px-4 md:px-5 sm:px-0 max-w-[500px] lg:max-w-[1020px] xl:max-w-[55vw] justify-center">
+      <div className="w-full flex flex-col lg:flex-row h-full py-6 mx-auto md:py-6 px-4 md:px-5 sm:px-0 max-w-[500px] lg:max-w-[1020px] 2xl:max-w-[60vw] justify-center">
         <div className="shadow-[0px_0px_7px_0px_#00000029] z-10 bg-white flex-grow rounded-[28px] py-6 px-5 md:px-9 flex flex-col gap-9 max-w-[650px]">
           {/* shipping address */}
           <div className="flex flex-col">
@@ -207,17 +240,31 @@ function CheckOutPage() {
             </h2>
 
             <div className="flex flex-col gap-4 pt-3">
-              <CustomInputField
-                name={"fullName"}
-                value={cardForm.fullName}
-                handleChange={handleInputChange}
-                handleBlur={handleBlur}
-                placeholder="Full Name"
-              />
+              <div className="relative">
+                <CustomInputField
+                  name={"fullName"}
+                  value={cardForm.fullName}
+                  handleChange={handleInputChange}
+                  handleBlur={handleBlur}
+                  placeholder="Full Name"
+                />
+                <label
+                  htmlFor={`custom-input-fullName`}
+                  className="absolute top-1.5 flex items-center justify-center w-10 h-[80%]   right-3 bg-white"
+                >
+                  <Image
+                    alt="username"
+                    src="/images/username-icon.jpeg"
+                    width={16}
+                    height={16}
+                    className="cursor-pointer"
+                  />
+                </label>
+              </div>
               <div className="relative w-full">
                 <input
                   type="text"
-                  id="cardNumber"
+                  id="custom-input-cardNumber"
                   name="cardNumber"
                   value={cardForm.cardNumber}
                   onChange={handleInputChange}
@@ -230,6 +277,18 @@ function CheckOutPage() {
                   }`}
                 >
                   {"Card Number"}
+                </label>
+                <label
+                  htmlFor="custom-input-cardNumber"
+                  className="absolute top-1.5 flex items-center justify-center w-10 h-[80%] right-3 bg-white"
+                >
+                  <Image
+                    alt="username"
+                    src="/images/card-number-icon.jpeg"
+                    width={18}
+                    height={18}
+                    className="cursor-pointer"
+                  />
                 </label>
               </div>
               <div className="flex flex-col w-full gap-4 md:flex-row">
@@ -257,14 +316,28 @@ function CheckOutPage() {
                   </label>
                 </div>
                 {/* CVV */}
-                <CustomInputField
-                  name={"cvv"}
-                  value={cardForm.cvv}
-                  handleChange={handleInputChange}
-                  handleBlur={handleBlur}
-                  placeholder="CVV"
-                  type="number"
-                />
+                <div className="relative w-full">
+                  <CustomInputField
+                    name={"cvv"}
+                    value={cardForm.cvv}
+                    handleChange={handleInputChange}
+                    handleBlur={handleBlur}
+                    placeholder="CVV"
+                    type="number"
+                  />
+                  <label
+                    htmlFor="custom-input-cvv"
+                    className="absolute top-1.5 flex items-center justify-center w-10 h-[80%] right-3 bg-white"
+                  >
+                    <Image
+                      alt="username"
+                      src="/images/cvv-icon.jpeg"
+                      width={22}
+                      height={22}
+                      className="cursor-pointer"
+                    />
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -273,7 +346,7 @@ function CheckOutPage() {
             Continue to Shipping
           </button>
         </div>
-        {selectedProductData.length > 0 && (
+        {isCartAvailable && (
           <>
             <motion.div
               initial={{ x: -400, y: 48 }}
@@ -281,54 +354,71 @@ function CheckOutPage() {
               transition={{ duration: 0.8 }}
               className="max-w-[420px] bg-white  shadow-[3px_0px_7px_0px_#0000001F] h-full  rounded-r-[28px] py-7 px-6 hidden lg:flex flex-col gap-7 "
             >
-              <div className="flex flex-col w-full gap-2">
-                {selectedProductData.map((item, index) => {
-                  const { name, description, image, price, id } = item;
-                  return (
-                    <div
-                      key={index}
-                      className="border relative border-[#0000001A] rounded-lg py-3 px-4"
-                    >
-                      <h2 className="absolute font-bold top-2 right-3 text-[#00A02C] font-Poppins text-[10px]">
-                        {price}
-                      </h2>
-                      <button
-                        onClick={() => handleDeleteClick(id)}
-                        className="absolute bottom-2 right-3"
-                      >
-                        {" "}
-                        <Image
-                          alt="moetar"
-                          src="/images/icon/bin-icon.svg"
-                          width={10}
-                          height={10}
-                        />
-                      </button>
-                      {/* image */}
-                      <div className="flex flex-shrink-0 h-full gap-4">
-                        <Image
-                          alt="moetar"
-                          src={`/images/${image}`}
-                          // src={image}
-                          width={38}
-                          height={38}
-                          className=""
-                        />
-                        <div className="flex flex-col justify-around pr-7">
-                          <h1 className="text-[#00A02C] font-bold text-[10px]">
-                            None
-                          </h1>
-                          <h2 className="text-[9px] text-[#595959] font-bold font-InaiMathi">
-                            {name ?? ""}
+              <div className="flex flex-col w-full gap-2 max-h-[45vh] overflow-auto scrollbar-thin">
+                {cart &&
+                  cart.stores.map((store: any) => {
+                    return store.cartLines.map((item: any, index: number) => {
+                      let cleanedImageUrl =
+                        item?.product?.images[0]?.url ||
+                        item?.variant?.image?.url;
+                      if (cleanedImageUrl.startsWith("//")) {
+                        cleanedImageUrl = cleanedImageUrl.replace(/^\/\//, "");
+                      }
+                      if (!cleanedImageUrl.startsWith("https://")) {
+                        cleanedImageUrl = `https://${cleanedImageUrl}`;
+                      } else {
+                        cleanedImageUrl = cleanedImageUrl;
+                      }
+                      return (
+                        <div
+                          key={index}
+                          className="border relative border-[#0000001A] rounded-lg py-3 px-4"
+                        >
+                          <h2 className="absolute font-bold top-2 right-3 text-[#00A02C] font-Poppins text-[10px]">
+                            {"0"}
                           </h2>
-                          <p className="text-[6px] font-InaiMathi font-medium text-[#888888]">
-                            {description ?? ""}
-                          </p>
+                          <button
+                            onClick={() =>
+                              removeItem(item.product?.id, item.variant?.id)
+                            }
+                            className="absolute bottom-2 right-3"
+                          >
+                            {" "}
+                            <Image
+                              alt="moetar"
+                              src="/images/icon/bin-icon.svg"
+                              width={10}
+                              height={10}
+                            />
+                          </button>
+                          {/* image */}
+                          <div className="flex flex-shrink-0 h-full gap-4">
+                            <Image
+                              alt="moetar"
+                              src={cleanedImageUrl}
+                              // src={image}
+                              width={38}
+                              height={38}
+                              className=""
+                            />
+                            <div className="flex flex-col justify-around pr-7">
+                              <h1 className="text-[#00A02C] font-bold text-[10px]">
+                                None
+                              </h1>
+                              <h2 className="text-[9px] text-[#595959] font-bold font-InaiMathi">
+                                {"Nature's Bounty B-Complex With Folic Acid" ??
+                                  ""}
+                              </h2>
+                              <p className="text-[6px] font-InaiMathi font-medium text-[#888888]">
+                                {"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,quis nostrud exercitation ullamco laboris." ??
+                                  ""}
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                      );
+                    });
+                  })}
               </div>
               {/* coupen code */}
               <form
@@ -353,7 +443,11 @@ function CheckOutPage() {
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between text-[#595959] font-bold  font-InaiMathi text-[10px]">
                   <p>Sub Total</p>
-                  <p>Rs 10000.00</p>
+                  <p>
+                    {cart?.cost?.subtotal?.displayValue?.length > 0
+                      ? cart.cost.subtotal.displayValue
+                      : "0"}
+                  </p>
                 </div>
                 <hr className="border-[#E9E9E9]" />
                 <div className="flex justify-between py-1  font-InaiMathi text-[10px]">
@@ -365,60 +459,81 @@ function CheckOutPage() {
                 <hr className="border-[#E9E9E9] " />
                 <div className="flex justify-between pt-3 text-[#595959] font-InaiMathi font-bold">
                   <p className="text-[14px]">Total</p>
-                  <p className="text-[12px]">PKR Rs 10000.00</p>
+                  <p className="text-[12px]">
+                    {cart?.cost?.subtotal?.displayValue?.length > 0
+                      ? cart.cost.subtotal.displayValue
+                      : "0"}
+                  </p>
                 </div>
               </div>
             </motion.div>
             {/* mobile card data */}
             <div className="max-w-[380px] mx-auto bg-white  shadow-[0.009999999776482582px_4px_4.692098140716553px_0px_#0000001F] h-full  rounded-b-[28px] py-4 px-4 flex flex-col gap-7 lg:hidden -translate-y-4 pt-8">
-              <div className="flex flex-col w-full gap-2">
-                {selectedProductData.map((item, index) => {
-                  const { name, description, image, price, id } = item;
-                  return (
-                    <div
-                      key={index}
-                      className="border relative border-[#0000001A] rounded-lg py-2 px-4"
-                    >
-                      <h2 className="absolute font-bold top-2 right-3 text-[#00A02C] font-Poppins text-[8px] md:text-[10px]">
-                        {price}
-                      </h2>
-                      <button
-                        onClick={() => handleDeleteClick(id)}
-                        className="absolute bottom-2 right-3"
-                      >
-                        {" "}
-                        <Image
-                          alt="moetar"
-                          src="/images/icon/bin-icon.svg"
-                          width={10}
-                          height={10}
-                        />
-                      </button>
-                      {/* image */}
-                      <div className="flex flex-shrink-0 h-full gap-4">
-                        <Image
-                          alt="moetar"
-                          src={`/images/${image}`}
-                          // src={image}
-                          width={38}
-                          height={38}
-                          className=""
-                        />
-                        <div className="flex flex-col justify-around pr-7">
-                          <h1 className="text-[#00A02C] font-bold text-[8px] md:text-[10px]">
-                            None
-                          </h1>
-                          <h2 className="text-[7px] md:text-[9px] text-[#595959] font-bold font-InaiMathi">
-                            {name ?? ""}
+              <div className="flex flex-col w-full gap-2 max-h-[45vh] overflow-auto">
+                {cart &&
+                  cart.stores.map((store: any) => {
+                    return store.cartLines.map((item: any, index: number) => {
+                      let cleanedImageUrl =
+                        item?.product?.images[0]?.url ||
+                        item?.variant?.image?.url;
+                      if (cleanedImageUrl.startsWith("//")) {
+                        cleanedImageUrl = cleanedImageUrl.replace(/^\/\//, "");
+                      }
+                      if (!cleanedImageUrl.startsWith("https://")) {
+                        cleanedImageUrl = `https://${cleanedImageUrl}`;
+                      } else {
+                        cleanedImageUrl = cleanedImageUrl;
+                      }
+                      return (
+                        <div
+                          key={index}
+                          className="border relative border-[#0000001A] rounded-lg py-2 px-4"
+                        >
+                          <h2 className="absolute font-bold top-2 right-3 text-[#00A02C] font-Poppins text-[8px] md:text-[10px]">
+                            {"0"}
                           </h2>
-                          <p className="text-[6px] font-InaiMathi font-medium text-[#888888]">
-                            {description ?? ""}
-                          </p>
+                          <button
+                            onClick={() =>
+                              removeItem(item.product?.id, item.variant?.id)
+                            }
+                            className="absolute bottom-2 right-3"
+                          >
+                            {" "}
+                            <Image
+                              alt="moetar"
+                              src="/images/icon/bin-icon.svg"
+                              width={10}
+                              height={10}
+                            />
+                          </button>
+                          {/* image */}
+                          <div className="flex flex-shrink-0 h-full gap-4">
+                            <Image
+                              alt="moetar"
+                              src={cleanedImageUrl}
+                              // src={image}
+                              width={38}
+                              height={38}
+                              className=""
+                            />
+                            <div className="flex flex-col justify-around pr-7">
+                              <h1 className="text-[#00A02C] font-bold text-[8px] md:text-[10px]">
+                                None
+                              </h1>
+                              <h2 className="text-[7px] md:text-[9px] text-[#595959] font-bold font-InaiMathi">
+                                {"Nature's Bounty B-Complex With Folic Acid" ??
+                                  ""}
+                              </h2>
+                              <p className="text-[6px] font-InaiMathi font-medium text-[#888888]">
+                                {"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,quis nostrud exercitation ullamco laboris." ??
+                                  ""}
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                      );
+                    });
+                  })}
               </div>
               {/* coupen code */}
               <form
@@ -491,6 +606,11 @@ function CheckOutPage() {
           />
         </motion.div>
       </div>
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        toastOptions={{ duration: 2000 }}
+      />
     </div>
   );
 }

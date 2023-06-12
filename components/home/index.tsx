@@ -61,7 +61,7 @@ function HomePage() {
       const data: any =
         resultData !== "undefined" && resultData ? JSON.parse(resultData) : "";
       if (data) {
-        if (data.resultData.length > 0 && data.question.length > 0) {
+        if (data?.resultData?.length > 0 && data?.question?.length > 0) {
           setGeneratedBios(data?.resultData);
           setSearchValue(data.question);
         }
