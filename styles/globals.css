@@ -69,3 +69,8 @@ button.animated:hover {
     font-weight: normal;
     font-style: normal;
 }
+
+iframe {
+    height: 54px;
+    width: 100%;
+}

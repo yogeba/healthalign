@@ -7,6 +7,7 @@ interface CustomDataFieldProps {
   handleBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
   placeholder: string;
   type?: string;
+  id?: string;
 }
 const CustomInputField: React.FC<CustomDataFieldProps> = ({
   name = "",
@@ -15,13 +16,14 @@ const CustomInputField: React.FC<CustomDataFieldProps> = ({
   handleBlur,
   placeholder = "",
   type = "",
+  id = "",
 }) => {
   return (
     <div className="relative w-full">
       <input
         type={type ?? ""}
         name={name}
-        id={`custom-input-${name}`}
+        id={`${id.length > 0 ? id : `custom-input-${name}`}`}
         value={value}
         maxLength={name === "cvv" ? 3 : undefined}
         onChange={(e) => handleChange(e)}

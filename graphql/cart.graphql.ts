@@ -126,141 +126,141 @@ export const ADD_CART_ITEMS = gql`
 `;
 
 export const GET_CART = gql`
-  query ($id: ID!) {
-    getCart(id: $id) {
-      cart {
-        id
-        buyerIdentity {
-          firstName
-          lastName
-          address1
-          address2
-          city
-          provinceCode
-          countryCode
-          postalCode
-          email
-          phone
+query ($id: ID!) {
+  getCart(id: $id) {
+    cart {
+      id
+      buyerIdentity {
+        firstName
+        lastName
+        address1
+        address2
+        city
+        provinceCode
+        countryCode
+        postalCode
+        email
+        phone
+      }
+      cost {
+        subtotal {
+          displayValue
         }
-        cost {
-          subtotal {
-            displayValue
+        shipping {
+          displayValue
+        }
+        total {
+          displayValue
+        }
+      }
+      stores {
+        ... on AmazonStore {
+          store
+          cartLines {
+            quantity
+            product {
+              id
+              title
+              description
+              isAvailable
+              price {
+                currency
+                displayValue
+              }
+              images {
+                url
+              }
+            }
           }
-          shipping {
-            displayValue
-          }
-          total {
-            displayValue
+          offer {
+            selectedShippingMethod {
+              id
+            }
+            errors {
+              code
+              message
+              details {
+                ... on AmazonOfferErrorDetails {
+                  productIds
+                }
+              }
+            }
+            subtotal {
+              currency
+              displayValue
+            }
+            margin {
+              currency
+              displayValue
+            }
+            shippingMethods {
+              id
+              label
+              price {
+                currency
+                displayValue
+              }
+              taxes {
+                currency
+                displayValue
+              }
+              total {
+                currency
+                displayValue
+              }
+            }
           }
         }
-        stores {
-          ... on AmazonStore {
-            store
-            cartLines {
-              quantity
-              product {
-                id
-                images {
-                  url
-                }
+        ... on ShopifyStore {
+          store
+          cartLines {
+            quantity
+            variant {
+              id
+              title
+              name
+              image {
+                url
               }
-            }
-            offer {
-              selectedShippingMethod {
-                id
-              }
-              errors {
-                code
-                message
-                details {
-                  ... on AmazonOfferErrorDetails {
-                    productIds
-                  }
-                }
-              }
-              subtotal {
-                value
-                displayValue
-                currency
-              }
-              margin {
-                value
-                displayValue
-                currency
-              }
-              shippingMethods {
-                id
-                label
-                price {
-                  value
-                  displayValue
-                  currency
-                }
-                taxes {
-                  value
-                  displayValue
-                  currency
-                }
-                total {
-                  value
-                  displayValue
-                  currency
-                }
-              }
+              price
+              compareAtPrice
             }
           }
-          ... on ShopifyStore {
-            store
-            cartLines {
-              quantity
-              variant {
-                id
-                image {
-                  url
+          offer {
+            errors {
+              code
+              message
+              details {
+                ... on ShopifyOfferErrorDetails {
+                  variantIds
                 }
               }
             }
-            offer {
-              errors {
-                code
-                message
-                details {
-                  ... on ShopifyOfferErrorDetails {
-                    variantIds
-                  }
-                }
-              }
-              selectedShippingMethod {
-                id
-              }
-              subtotal {
-                value
-                displayValue
+            selectedShippingMethod {
+              id
+            }
+            subtotal {
+              currency
+              displayValue
+            }
+            margin {
+              currency
+              displayValue
+            }
+            shippingMethods {
+              id
+              label
+              price {
                 currency
-              }
-              margin {
-                value
                 displayValue
-                currency
               }
-              shippingMethods {
-                id
-                label
-                price {
-                  value
-                  displayValue
-                  currency
-                }
-                taxes {
-                  value
-                  displayValue
-                  currency
-                }
-                total {
-                  value
-                  displayValue
-                  currency
-                }
+              taxes {
+                currency
+                displayValue
+              }
+              total {
+                currency
+                displayValue
               }
             }
           }
@@ -268,7 +268,10 @@ export const GET_CART = gql`
       }
     }
   }
+}
+
 `;
+// export const GET_CART = gql``;
 
 export const DELETE_CART_ITEMS = gql`
   mutation ($input: CartItemsDeleteInput!) {

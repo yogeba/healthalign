@@ -113,7 +113,7 @@ const LeftSideBar: React.FC<BodyProps> = ({
       });
   };
 
-  const stopRecord = async () => {
+  /* const stopRecord = async () => {
     setIsRecording(false);
     console.log(process.env.MONGODB_URI, "test data");
     recorder
@@ -140,19 +140,49 @@ const LeftSideBar: React.FC<BodyProps> = ({
 
         const res = await axios.post(apiUrl, formData, { headers });
         setSearchItem(res.data.text);
-
-        /* const response = await fetch("/api/whisper", {
-          method: "POST",
-          body: formData,
-        });
-        const text = await response.json();
-        console.log(text, "texttexttexttexttexttexttexttext"); 
-        console.log({ whisper: text });*/
       })
       .catch((e: any) => {
         alert("We could not retrieve your message");
         console.log(e);
       });
+  }; */
+  const stopRecord = async () => {
+    setIsRecording(false);
+    console.log(process.env.MONGODB_URI, "test data");
+    try {
+      const { blob, buffer } = await recorder.stop();
+      const file = new File([buffer], "voice.mp3", {
+        type: blob.type,
+        lastModified: Date.now(),
+      });
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("model", "whisper-1");
+      formData.append("response_format", "json");
+      formData.append("temperature", "0");
+      formData.append("language", "en");
+
+      const apiUrl = "https://api.openai.com/v1/audio/transcriptions";
+      const headers = {
+        Accept: "application/json",
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
+      };
+
+      const res = await axios.post(apiUrl, formData, { headers });
+      setSearchItem(res.data.text);
+
+      /* const response = await fetch("/api/whisper", {
+        method: "POST",
+        body: formData,
+      });
+      const text = await response.json();
+      console.log(text, "texttexttexttexttexttexttexttext"); 
+      console.log({ whisper: text });*/
+    } catch (error) {
+      alert("We could not retrieve your message");
+      console.log(error);
+    }
   };
   return (
     <div className="flex items-center justify-center">

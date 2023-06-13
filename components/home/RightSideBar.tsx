@@ -198,7 +198,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
             src="/images/image/fotor-poster.png"
             width={800}
             height={800}
-            className="w-auto h-auto flex-shrink-0 "
+            className="flex-shrink-0 w-auto h-auto "
           />
         </motion.div>
       ) : (
@@ -206,13 +206,13 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
           <div className="max-h-[78vh] md:max-h-[90vh] relative h-full w-full overflow-auto scrollbar-thin">
             {generatedBios && (
               <AnimatePresence mode="wait">
-                <motion.div
+                <div
                   key="content"
                   className="hidden md:flex flex-col justify-center gap-10 px-0.5 py-12 md:px-0 md:items-center md:mx-12 lg:pb-32 2xl:mx-0"
-                  initial="hidden"
-                  animate="visible"
-                  variants={zoomInVariants}
-                  transition={{ duration: 1.5 }}
+                  // initial="hidden"
+                  // animate="visible"
+                  // variants={zoomInVariants}
+                  // transition={{ duration: 1.5 }}
                 >
                   {!isLeftSideBarVisible && (
                     <motion.div
@@ -254,7 +254,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                         <ResultCard key={index} generatedBio={generatedBio} />
                       );
                     })}
-                </motion.div>
+                </div>
               </AnimatePresence>
             )}
             {generatedBios && (

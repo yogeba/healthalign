@@ -5,6 +5,9 @@ import CommonHeader from "components/common/Header";
 import { Toaster, toast } from "react-hot-toast";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import CheckoutProductCard from "./CheckoutProductCard";
+import { RyePay, SubmitCartResult, SubmitStoreResult } from "@rye-api/rye-pay";
+import { SelectedShippingOption } from "lib/cart/inputs";
 interface formDataType {
   country: string;
   firstName: string;
@@ -14,6 +17,7 @@ interface formDataType {
   city: string;
   postal: string;
   phone: string;
+  state: string;
 }
 interface CardFormState {
   cardNumber: string;
@@ -22,11 +26,33 @@ interface CardFormState {
   fullName: string;
 }
 
-function CheckOutPage() {
+const ryePay = new RyePay();
+
+interface SpreedlyError {
+  attribute: string;
+  key: string;
+  message: string;
+}
+
+interface FrameError {
+  msg: string;
+  url: string;
+  line: number;
+  col: number;
+}
+
+interface CheckoutPageProps {
+  selectedShippingOptions?: SelectedShippingOption[];
+}
+
+const CheckOutPage: React.FC<CheckoutPageProps> = ({
+  selectedShippingOptions,
+}) => {
   const [isCartAvailable, setIsCartAvailable] = useState(false);
   const [coupenCode, setCoupenCode] = useState("");
   const [cartId, setCartId] = useState<string>("");
   const [cart, setCart] = useState<any>();
+  const [stores, setStores] = useState<SubmitStoreResult[] | null>(null);
   const [formData, setFormData] = useState<formDataType>({
     country: "",
     firstName: "",
@@ -36,6 +62,7 @@ function CheckOutPage() {
     city: "",
     postal: "",
     phone: "",
+    state: "",
   });
 
   const {
@@ -47,6 +74,7 @@ function CheckOutPage() {
     city,
     postal,
     phone,
+    state,
   } = formData;
 
   const fetchCartDetails = async () => {
@@ -117,6 +145,7 @@ function CheckOutPage() {
 
   useEffect(() => {
     setIsCartAvailable(cart?.stores?.length > 0);
+    console.log(cart);
   }, [cart]);
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -155,6 +184,103 @@ function CheckOutPage() {
     );
   };
 
+  useEffect(() => {
+    loadSpreedly();
+  }, []);
+
+  const loadSpreedly = () => {
+    console.log(cardForm.cardNumber);
+    ryePay.init({
+      // apiKey: "zXYzvid2v4",
+      apiKey: process.env.NEXT_PUBLIC_RYE_API_KEY,
+      numberEl: "checkout-card-number",
+      environment: "prod",
+      cvvEl: "checkout-cvv-number",
+      onReady: () => {
+        // Customize card number field and cvv field
+        ryePay.setStyle(
+          "number",
+          "display:inline; width: 93.8%; border-radius: 9px; border: 1px solid #ccc; padding-left: 17px; padding-right: 17px;padding-top: 18px; padding-bottom: 18px; font-size: 13px; font-weight: bold; "
+        );
+        ryePay.setStyle(
+          "cvv",
+          "display:inline; width: 85%; border-radius: 9px; border: 1px solid #ccc; padding-left: 17px; padding-right: 17px;padding-top: 18px; padding-bottom: 18px; font-size: 13px; font-weight: bold; "
+        );
+
+        ryePay.setPlaceholder("number", "Card Number");
+
+        /* ryePay.setValue("number", +cardForm.cardNumber);
+        ryePay.setValue("cvv", +cardForm.cvv); */
+      },
+      onErrors: (errors: SpreedlyError[]) => {
+        console.log(errors);
+        for (const { key, message, attribute } of errors) {
+          console.log(`new error: ${key}-${message}-${attribute}`);
+          toast.error(`${message}`);
+        }
+      },
+      enableLogging: true,
+      onIFrameError: (err: FrameError) => {
+        console.log(`frameError: ${JSON.stringify(err)}`);
+      },
+      onCartSubmitted: (result: SubmitCartResult) => {
+        console.log({ result });
+        setStores(result?.cart?.stores);
+      },
+    });
+  };
+  const validateForm = () => {
+    const [year, month] = cardForm.expireDate.split("-");
+    // Define an array of required fields
+
+    // Check if any required field is empty
+    const isValid =
+      formData.country !== "" &&
+      formData.firstName !== "" &&
+      formData.lastName !== "" &&
+      formData.address !== "" &&
+      formData.city !== "" &&
+      formData.postal !== "" &&
+      formData.state !== "" &&
+      formData.phone !== "" &&
+      cartId !== "";
+
+    return isValid;
+  };
+
+  const submit = () => {
+    const [year, month] = cardForm.expireDate.split("-");
+
+    if (validateForm()) {
+      ryePay.submit({
+        first_name: firstName,
+        last_name: lastName,
+        month,
+        year,
+        cartId,
+        phone_number: phone,
+        // promoCodes, TODO: uncomment once promo codes are supported by backend
+        address1: address,
+        address2: appartment,
+        zip: postal,
+        city,
+        country,
+        state,
+        selectedShippingOptions,
+        shopperIp: "192.168.0.1",
+      });
+    } else {
+      toast.error("Enter valid Data");
+    }
+    // Convert month to a number
+  };
+
+  useEffect(() => {
+    console.log(cardForm.cardNumber);
+    const cardInput = document.getElementById("card_number");
+    console.log(cardInput);
+  }, [cardForm]);
+
   return (
     <div className="flex flex-col w-full h-full">
       <div className="sticky top-0 z-20 bg-white">
@@ -169,13 +295,22 @@ function CheckOutPage() {
             </h2>
 
             <div className="flex flex-col gap-4 pt-4">
-              <CustomInputField
-                name={"country"}
-                value={country}
-                handleChange={handleChange}
-                handleBlur={handleBlur}
-                placeholder="Country / Region"
-              />
+              <div className="flex flex-col w-full gap-4 md:flex-row">
+                <CustomInputField
+                  name={"country"}
+                  value={country}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  placeholder="Country / Region"
+                />
+                <CustomInputField
+                  name={"state"}
+                  value={state}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  placeholder="STate"
+                />
+              </div>
               <div className="flex flex-col w-full gap-4 md:flex-row">
                 <CustomInputField
                   name={"firstName"}
@@ -261,26 +396,25 @@ function CheckOutPage() {
                   />
                 </label>
               </div>
-              <div className="relative w-full">
+              <div className="relative w-full" id="checkout-card-number">
                 <input
                   type="text"
-                  id="custom-input-cardNumber"
                   name="cardNumber"
                   value={cardForm.cardNumber}
                   onChange={handleInputChange}
                   maxLength={19} // Including spaces, the maximum length is 19
-                  className="flex w-full px-3.5 pt-4 pb-3 border border-gray-300 rounded-[9px] outline-none focus:ring-black focus:border-black focus:shadow-none text-[13px] font-bold font-Inter text-black"
+                  className=" w-full px-3.5 pt-4 pb-3 border border-gray-300 rounded-[9px] outline-none focus:ring-black focus:border-black hidden focus:shadow-none text-[13px] font-bold font-Inter text-black"
                 />
-                <label
+                {/*  <label
                   className={`absolute left-4 text-[#909090] transition-all text-[10px] font-medium duration-300 ${
                     cardForm.cardNumber.trim() !== "" ? "top-1" : "top-[22px]"
                   }`}
                 >
                   {"Card Number"}
-                </label>
+                </label> */}
                 <label
-                  htmlFor="custom-input-cardNumber"
-                  className="absolute top-1.5 flex items-center justify-center w-10 h-[80%] right-3 bg-white"
+                  htmlFor="checkout-card-number"
+                  className="absolute flex items-center justify-center w-10 bg-white top-4 right-3"
                 >
                   <Image
                     alt="username"
@@ -316,17 +450,18 @@ function CheckOutPage() {
                   </label>
                 </div>
                 {/* CVV */}
-                <div className="relative w-full">
-                  <CustomInputField
+                <div className="relative w-full" id="checkout-cvv-number">
+                  {/* <CustomInputField
                     name={"cvv"}
                     value={cardForm.cvv}
                     handleChange={handleInputChange}
                     handleBlur={handleBlur}
                     placeholder="CVV"
                     type="number"
-                  />
+                    id="checkout-cvv-number"
+                  /> */}
                   <label
-                    htmlFor="custom-input-cvv"
+                    htmlFor="checkout-cvv-number"
                     className="absolute top-1.5 flex items-center justify-center w-10 h-[80%] right-3 bg-white"
                   >
                     <Image
@@ -342,7 +477,10 @@ function CheckOutPage() {
             </div>
           </div>
           {/* submit button */}
-          <button className="w-full bg-[#4DAF00] rounded-lg py-[20px] text-white font-bold font-Inter text-[10px]">
+          <button
+            onClick={() => submit()}
+            className="w-full bg-[#4DAF00] rounded-lg py-[20px] text-white font-bold font-Inter text-[10px]"
+          >
             Continue to Shipping
           </button>
         </div>
@@ -370,52 +508,13 @@ function CheckOutPage() {
                         cleanedImageUrl = cleanedImageUrl;
                       }
                       return (
-                        <div
+                        <CheckoutProductCard
                           key={index}
-                          className="border relative border-[#0000001A] rounded-lg py-3 px-4"
-                        >
-                          <h2 className="absolute font-bold top-2 right-3 text-[#00A02C] font-Poppins text-[10px]">
-                            {"0"}
-                          </h2>
-                          <button
-                            onClick={() =>
-                              removeItem(item.product?.id, item.variant?.id)
-                            }
-                            className="absolute bottom-2 right-3"
-                          >
-                            {" "}
-                            <Image
-                              alt="moetar"
-                              src="/images/icon/bin-icon.svg"
-                              width={10}
-                              height={10}
-                            />
-                          </button>
-                          {/* image */}
-                          <div className="flex flex-shrink-0 h-full gap-4">
-                            <Image
-                              alt="moetar"
-                              src={cleanedImageUrl}
-                              // src={image}
-                              width={38}
-                              height={38}
-                              className=""
-                            />
-                            <div className="flex flex-col justify-around pr-7">
-                              <h1 className="text-[#00A02C] font-bold text-[10px]">
-                                None
-                              </h1>
-                              <h2 className="text-[9px] text-[#595959] font-bold font-InaiMathi">
-                                {"Nature's Bounty B-Complex With Folic Acid" ??
-                                  ""}
-                              </h2>
-                              <p className="text-[6px] font-InaiMathi font-medium text-[#888888]">
-                                {"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,quis nostrud exercitation ullamco laboris." ??
-                                  ""}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
+                          item={item}
+                          removeItem={removeItem}
+                          cleanedImageUrl={cleanedImageUrl}
+                          isMobile={false}
+                        />
                       );
                     });
                   })}
@@ -485,52 +584,13 @@ function CheckOutPage() {
                         cleanedImageUrl = cleanedImageUrl;
                       }
                       return (
-                        <div
+                        <CheckoutProductCard
                           key={index}
-                          className="border relative border-[#0000001A] rounded-lg py-2 px-4"
-                        >
-                          <h2 className="absolute font-bold top-2 right-3 text-[#00A02C] font-Poppins text-[8px] md:text-[10px]">
-                            {"0"}
-                          </h2>
-                          <button
-                            onClick={() =>
-                              removeItem(item.product?.id, item.variant?.id)
-                            }
-                            className="absolute bottom-2 right-3"
-                          >
-                            {" "}
-                            <Image
-                              alt="moetar"
-                              src="/images/icon/bin-icon.svg"
-                              width={10}
-                              height={10}
-                            />
-                          </button>
-                          {/* image */}
-                          <div className="flex flex-shrink-0 h-full gap-4">
-                            <Image
-                              alt="moetar"
-                              src={cleanedImageUrl}
-                              // src={image}
-                              width={38}
-                              height={38}
-                              className=""
-                            />
-                            <div className="flex flex-col justify-around pr-7">
-                              <h1 className="text-[#00A02C] font-bold text-[8px] md:text-[10px]">
-                                None
-                              </h1>
-                              <h2 className="text-[7px] md:text-[9px] text-[#595959] font-bold font-InaiMathi">
-                                {"Nature's Bounty B-Complex With Folic Acid" ??
-                                  ""}
-                              </h2>
-                              <p className="text-[6px] font-InaiMathi font-medium text-[#888888]">
-                                {"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,quis nostrud exercitation ullamco laboris." ??
-                                  ""}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
+                          item={item}
+                          removeItem={removeItem}
+                          cleanedImageUrl={cleanedImageUrl}
+                          isMobile={true}
+                        />
                       );
                     });
                   })}
@@ -558,7 +618,12 @@ function CheckOutPage() {
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between text-[#595959] font-bold  font-InaiMathi text-[10px]">
                   <p>Sub Total</p>
-                  <p>Rs 10000.00</p>
+                  <p>
+                    {" "}
+                    {cart?.cost?.subtotal?.displayValue?.length > 0
+                      ? cart.cost.subtotal.displayValue
+                      : "0"}
+                  </p>
                 </div>
                 <hr className="border-[#E9E9E9]" />
                 <div className="flex justify-between py-1  font-InaiMathi text-[10px]">
@@ -570,7 +635,12 @@ function CheckOutPage() {
                 <hr className="border-[#E9E9E9] " />
                 <div className="flex justify-between pt-3 text-[#595959] font-InaiMathi font-bold">
                   <p className="text-[14px]">Total</p>
-                  <p className="text-[12px]">PKR Rs 10000.00</p>
+                  <p className="text-[12px]">
+                    {" "}
+                    {cart?.cost?.subtotal?.displayValue?.length > 0
+                      ? cart.cost.subtotal.displayValue
+                      : "0"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -613,6 +683,6 @@ function CheckOutPage() {
       />
     </div>
   );
-}
+};
 
 export default CheckOutPage;

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { CartProps } from "../types";
 import { getCartById } from "../lib/cart/getCart";
 import { useRouter } from "next/router";
 import {
@@ -8,6 +7,7 @@ import {
   updateCartItems,
   updateCartSelectedShippingOptions,
 } from "lib/cart";
+import { CartProps } from "types/searchProduct";
 
 // ...
 const Cart: React.FC<CartProps> = ({ cartId }) => {

@@ -5,12 +5,12 @@ import PerformanceCircle from "../common/PerformanceCircle";
 import CommonHeader from "../common/Header";
 import { motion } from "framer-motion";
 import PerformanceFill from "../common/PerformanceFill";
-import Link from "next/link";
 import { MARKETPLACE } from "constants/marketplace";
 import { fetchProduct } from "lib/products";
 import { addCartItems, createCart } from "lib/cart";
 import { Product } from "types/searchProduct";
 import { Toaster, toast } from "react-hot-toast";
+import { useRouter } from "next/router";
 
 const alphabetTabData = [
   { title: "A", isSelected: true, value: "47" },
@@ -26,10 +26,11 @@ interface ProductPageProps {
 }
 
 const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
+  const router = useRouter();
   const [isSelectedTabCertification, setSelectedTabCertification] =
     useState<Boolean>(false);
 
-  const [imageData, setimageData] = useState(
+  const [imageData, setImageData] = useState(
     productData.images.length > 0 && productData.images.map((i: any) => i.url)
   );
 
@@ -71,7 +72,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
   // Calculate the number of divs needed based on the data length
   const numDivs = Math.ceil(performanceData.length / 4);
 
-  const addToCart = async (product: Product) => {
+  const addToCart = async (product: Product, isBuyNow: boolean) => {
     console.log(product, "product this is product data new");
     const input = {
       items: {
@@ -107,9 +108,15 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
       await addCartItems({ id: cartId, items: input.items });
     }
 
-    toast.success("Product added to cart");
+    !isBuyNow
+      ? toast.success("Product added to cart")
+      : router.push("/checkout");
 
     console.log(productDetails, "productDetails");
+  };
+
+  const handleBuyNowClick = async (product: Product) => {
+    addToCart(product, true);
   };
 
   return (
@@ -247,17 +254,17 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
                 className="py-8 md:py-16 flex  justify-center items-center gap-[25px] w-full flex-col sm:flex-row"
               >
                 <button
-                  onClick={() => addToCart(productData)}
+                  onClick={() => addToCart(productData, false)}
                   className="text-xs hover:underline border border-black rounded-full font-Poppins font-medium py-2.5 px-[60px] "
                 >
                   Add to Cart
                 </button>
-                <Link
-                  href="/checkout"
+                <button
+                  onClick={() => handleBuyNowClick(productData)}
                   className="text-xs hover:underline border border-black rounded-full font-Poppins font-medium py-2.5 px-[60px] "
                 >
                   Buy Now
-                </Link>
+                </button>
               </motion.div>
               <div className="border-t w-full flex-col md:flex-row h-full border-[#00000017] flex justify-center">
                 {Array(numDivs)
