@@ -23,7 +23,7 @@ const ChatResultCard: React.FC<ResultCardProps> = ({ generatedBio }) => {
       />
       <div className="shadow-[0px_0px_4.086124897003174px_0px_#00000029] p-1.5 rounded-[16px] w-full max-w-[250px] sm:max-w-[300px] flex flex-col gap-2.5">
         <div className="w-full py-1">
-          <AudioPlayer audioFile={"audio/Lorem_ipsum.mp3"} />
+          {/* <AudioPlayer audioFile={"audio/Lorem_ipsum.mp3"} /> */}
         </div>
         <div className="px-2.5 text-[10px] font-normal font-Poppins text-justify">
           {isExpanded

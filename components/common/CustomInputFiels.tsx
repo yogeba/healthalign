@@ -33,8 +33,8 @@ const CustomInputField: React.FC<CustomDataFieldProps> = ({
         }`}
       />
       <label
-        className={`absolute left-4 text-[#909090] transition-all text-[10px] font-medium duration-300 ${
-          value.trim() !== "" ? "top-1" : "top-[22px]"
+        className={`absolute left-4 text-[#909090] transition-all  font-medium duration-300 ${
+          value.trim() !== "" ? "top-1 text-[10px]" : "top-[20px] text-[13px]"
         }`}
       >
         {placeholder ?? ""}

@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { Toaster, toast } from "react-hot-toast";
 import Image from "next/image";
 import useReadMore from "../hooks/ReadMore";
@@ -9,21 +8,14 @@ interface ResultCardProps {
   generatedBio: string;
 }
 
-const initialWordCount = 200;
+const initialWordCount = 230;
 
 const ResultCard: React.FC<ResultCardProps> = ({ generatedBio }) => {
   const { limit, isExpanded, handleReadMore, handleReadLess } =
     useReadMore(initialWordCount);
 
   return (
-    <div
-      className="relative mx-5 xs:mx-0 md:mx-[50px] h-full rounded-[28px] md:max-w-5xl lg:w-[900px] px-6 md:px-12 flex md:items-center gap-10 justify-between shadow-[0px_0px_7px_0px_#00000029] bg-white"
-      // variants={zoomOutVariants}
-      // initial="hidden"
-      // animate="visible"
-      // exit="hidden"
-      // transition={{ duration: 1 }}
-    >
+    <div className="relative mx-5 xs:mx-0 md:mx-[50px] h-full rounded-[28px] md:max-w-5xl lg:w-[900px] px-6 md:px-12 flex md:items-center gap-10 justify-between shadow-[0px_0px_7px_0px_#00000029] bg-white">
       <div className="flex flex-col w-full h-full gap-3 py-6">
         {/* waweform audio data */}
         <div className="flex">

@@ -1,11 +1,11 @@
 // pages/about.tsx
 
-import type { NextPage } from 'next';
-import Head from 'next/head';
-import { motion } from 'framer-motion';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import Image from 'next/image';
+import type { NextPage } from "next";
+import Head from "next/head";
+import { motion } from "framer-motion";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import Image from "next/image";
 
 const About: NextPage = () => {
   return (
@@ -19,11 +19,15 @@ const About: NextPage = () => {
         />
       </Head>
 
-      <Header />
+      {/* <Header /> */}
 
-      
-      <main className="flex flex-1 flex-col items-center justify-center w-full px-4 mt-12 sm:mt-10">
-        <Image src="/about.jpg" alt='About Health Align' width={1920} height={1200}></Image>
+      <main className="flex flex-col items-center justify-center flex-1 w-full px-4 mt-12 sm:mt-10">
+        <Image
+          src="/about.jpg"
+          alt="About Health Align"
+          width={1920}
+          height={1200}
+        ></Image>
 
         <motion.h1
           className="sm:text-6xl text-4xl max-w-[708px] font-bold text-slate-900 mb-8"
@@ -34,21 +38,21 @@ const About: NextPage = () => {
           About Health Align
         </motion.h1>
 
-        <div className="max-w-3xl w-full text-center">
-          <p className="text-slate-500 mb-6">
+        <div className="w-full max-w-3xl text-center">
+          <p className="mb-6 text-slate-500">
             Health Align is a platform dedicated to helping you discover your
             optimal health needs through plant-based nature's secrets. Our goal
             is to provide personalized health recommendations based on your
             unique conditions, goals, or desired outcomes.
           </p>
 
-          <p className="text-slate-500 mb-6">
+          <p className="mb-6 text-slate-500">
             We believe that nature has the power to heal, and our mission is to
             uncover the most effective plant-based supplements, treatments, and
             lifestyle changes that can help you live a healthier, happier life.
           </p>
 
-          <p className="text-slate-500 mb-6">
+          <p className="mb-6 text-slate-500">
             Our team of health experts, researchers, and developers work
             tirelessly to provide you with accurate, up-to-date, and
             evidence-based health information. We're constantly exploring the
@@ -58,8 +62,8 @@ const About: NextPage = () => {
 
           <p className="text-slate-500">
             Thank you for choosing Health Align to be your trusted source for
-            plant-based health solutions. We look forward to helping you on
-            your journey to optimal health and well-being.
+            plant-based health solutions. We look forward to helping you on your
+            journey to optimal health and well-being.
           </p>
         </div>
       </main>

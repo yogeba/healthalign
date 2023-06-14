@@ -1,6 +1,10 @@
 import CustomInputField from "components/common/CustomInputFiels";
 import React, { useEffect, useRef, useState } from "react";
-import { deleteCartItems, getCartById } from "lib/cart";
+import {
+  deleteCartItems,
+  getCartById,
+  updateCartBuyerIdentity,
+} from "lib/cart";
 import CommonHeader from "components/common/Header";
 import { Toaster, toast } from "react-hot-toast";
 import { motion } from "framer-motion";
@@ -208,6 +212,7 @@ const CheckOutPage: React.FC<CheckoutPageProps> = ({
         );
 
         ryePay.setPlaceholder("number", "Card Number");
+        ryePay.setPlaceholder("cvv", "CVV");
 
         /* ryePay.setValue("number", +cardForm.cardNumber);
         ryePay.setValue("cvv", +cardForm.cvv); */
@@ -248,27 +253,52 @@ const CheckOutPage: React.FC<CheckoutPageProps> = ({
     return isValid;
   };
 
+  const updateBuyerIdentity = async (buyerData: any) => {
+    console.log(buyerData);
+    // add form or anything to update customer details
+    const input = {
+      id: cartId,
+      buyerIdentity: buyerData,
+    };
+    await updateCartBuyerIdentity(input);
+    fetchCartDetails();
+  };
+
   const submit = () => {
     const [year, month] = cardForm.expireDate.split("-");
 
     if (validateForm()) {
-      ryePay.submit({
-        first_name: firstName,
-        last_name: lastName,
-        month,
-        year,
-        cartId,
-        phone_number: phone,
-        // promoCodes, TODO: uncomment once promo codes are supported by backend
+      updateBuyerIdentity({
+        firstName,
+        lastName,
+        // email: "ak@ak.com",
+        phone,
         address1: address,
         address2: appartment,
-        zip: postal,
         city,
-        country,
-        state,
-        selectedShippingOptions,
-        shopperIp: "192.168.0.1",
+        provinceCode: state,
+        countryCode: country,
+        postalCode: postal,
       });
+      setTimeout(() => {
+        ryePay.submit({
+          first_name: firstName,
+          last_name: lastName,
+          month,
+          year,
+          cartId,
+          phone_number: phone,
+          // promoCodes, TODO: uncomment once promo codes are supported by backend
+          address1: address,
+          address2: appartment,
+          zip: postal,
+          city,
+          country,
+          state,
+          selectedShippingOptions,
+          shopperIp: "192.168.0.1",
+        });
+      }, 2000);
     } else {
       toast.error("Enter valid Data");
     }
@@ -287,7 +317,7 @@ const CheckOutPage: React.FC<CheckoutPageProps> = ({
         <CommonHeader />
       </div>
       <div className="w-full flex flex-col lg:flex-row h-full py-6 mx-auto md:py-6 px-4 md:px-5 sm:px-0 max-w-[500px] lg:max-w-[1020px] 2xl:max-w-[60vw] justify-center">
-        <div className="shadow-[0px_0px_7px_0px_#00000029] z-10 bg-white flex-grow rounded-[28px] py-6 px-5 md:px-9 flex flex-col gap-9 max-w-[650px]">
+        <div className="md:shadow-[0px_0px_7px_0px_#00000029] z-10 bg-white flex-grow rounded-[28px] py-6 px-5 md:px-9 flex flex-col gap-9 max-w-[650px]">
           {/* shipping address */}
           <div className="flex flex-col">
             <h2 className="text-xs font-bold text-black capitalize font-Inter">
@@ -308,7 +338,7 @@ const CheckOutPage: React.FC<CheckoutPageProps> = ({
                   value={state}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
-                  placeholder="STate"
+                  placeholder="State"
                 />
               </div>
               <div className="flex flex-col w-full gap-4 md:flex-row">
@@ -559,8 +589,8 @@ const CheckOutPage: React.FC<CheckoutPageProps> = ({
                 <div className="flex justify-between pt-3 text-[#595959] font-InaiMathi font-bold">
                   <p className="text-[14px]">Total</p>
                   <p className="text-[12px]">
-                    {cart?.cost?.subtotal?.displayValue?.length > 0
-                      ? cart.cost.subtotal.displayValue
+                    {cart?.cost?.total?.displayValue?.length > 0
+                      ? cart.cost.total.displayValue
                       : "0"}
                   </p>
                 </div>

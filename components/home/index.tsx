@@ -5,12 +5,21 @@ import CommonHeader from "../common/Header";
 import RightSideBar from "./RightSideBar";
 import LeftSideBar from "./LeftSideBar";
 import { motion } from "framer-motion";
+import { Toaster, toast } from "react-hot-toast";
 
 function HomePage() {
   const [generatedBios, setGeneratedBios] = useState<string>("");
   const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(true);
   const [searchValue, setSearchValue] = useState<string | null>("");
   const [allSupplementNames, setAllSupplementNames] = useState<string[]>([]);
+  const [isMobileView, setisMobileView] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const isMobile = window.innerWidth <= 768;
+      setisMobileView(isMobile);
+    }
+  }, []);
 
   const extractSupplementNames = (response: string) => {
     const lines = response.split("\n");
@@ -60,12 +69,21 @@ function HomePage() {
       const resultData: string | null = localStorage.getItem("resultData");
       const data: any =
         resultData !== "undefined" && resultData ? JSON.parse(resultData) : "";
-      if (data) {
-        console.log(data, "all localstorafge data");
-        if (data?.resultData?.length > 0 && data?.question?.length > 0) {
-          setGeneratedBios(data?.resultData);
-          setSearchValue(data.question);
-        }
+      if (data && data.resultData.length > 0 && data.question.length > 0) {
+        toast
+          .promise(new Promise<void>((resolve) => setTimeout(resolve, 2500)), {
+            loading: "Fetching data...",
+            success: "All data fetched",
+            error: "Error while fetching data",
+          })
+          .then(() => {
+            setGeneratedBios(data.resultData);
+            setSearchValue(data.question);
+            setIsSidebarVisible(false);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       }
     }
   }, []);
@@ -76,13 +94,12 @@ function HomePage() {
       localStorage.setItem("visibility", JSON.stringify(!isSidebarVisible));
     }
   };
-
   const leftSidebarAnimation = {
     hidden: {
       translateX: "-100%",
       opacity: 0,
       width: 0,
-      height: 0,
+      height: isMobileView ? 0 : "100%",
     },
     visible: {
       translateX: 0,
@@ -161,8 +178,8 @@ function HomePage() {
               />
               {!isSidebarVisible && (
                 <motion.div
-                  initial={{ x: -100, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   transition={{ duration: 1 }}
                   className="absolute top-0 left-0 items-center hidden h-full lg:flex -z-10"
                 >
@@ -177,8 +194,8 @@ function HomePage() {
               )}
               {!isSidebarVisible && (
                 <motion.div
-                  initial={{ x: 100, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   transition={{ duration: 1 }}
                   className="absolute top-0 right-0 items-center hidden h-full lg:flex -z-10"
                 >
@@ -195,6 +212,11 @@ function HomePage() {
           </div>
         </div>
       </div>
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        toastOptions={{ duration: 2000 }}
+      />
     </div>
   );
 }

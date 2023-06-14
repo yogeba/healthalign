@@ -5,13 +5,16 @@ interface PerformanceFillProps {
   title: string;
   performance: number;
   quantity: string;
+  allData: any;
 }
 
 const PerformanceFill: React.FC<PerformanceFillProps> = ({
   title,
   performance,
   quantity,
+  allData,
 }) => {
+  console.log(allData);
   return (
     <div className="flex flex-col gap-2.5">
       <h2 className="text-xs font-semibold text-black first-letter:capitalize font-Poppins">

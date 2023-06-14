@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import ProductCard from "../components/ProductCard";
-import { Product } from "types/searchProduct";
+/* import ProductCard from "../components/ProductCard";
+import { Product } from "types/searchProduct"; */
 
 function App() {
   const [product, setProduct] = useState<any | null>(null);
@@ -20,7 +20,7 @@ function App() {
   return (
     <div className="App">
       {/* Your application code */}
-      {product && <ProductCard product={product} />}
+      {/* {product && <ProductCard product={product} />} */}
     </div>
   );
 }

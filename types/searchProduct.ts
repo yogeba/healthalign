@@ -38,6 +38,7 @@ export interface Product {
   marketplace: string;
   identifier: string;
   quantity: number;
+  isAvailable: boolean;
 }
 
 export type CartProps = {

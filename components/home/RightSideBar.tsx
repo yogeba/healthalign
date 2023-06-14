@@ -4,7 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import ProductsOptions from "./ProductsOptions";
 import ResultCard from "components/common/ResultCard";
 import ChatResultCard from "components/common/ChatResultCard";
-import MicRecorder from "mic-recorder-to-mp3";
+// import MicRecorder from "mic-recorder-to-mp3";
+const MicRecorder = require("mic-recorder-to-mp3");
 import axios from "axios";
 
 const recorder = new MicRecorder({
@@ -127,7 +128,7 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
   useEffect(() => {
     if (!loading) {
       if (typeof window !== "undefined" && resultData !== "") {
-        const result = { resultData, question: "This is question" };
+        const result = { resultData, question: searchValue };
         localStorage.setItem("resultData", JSON.stringify(result));
       }
     }
@@ -161,14 +162,6 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
 
         const res = await axios.post(apiUrl, formData, { headers });
         setUpdatedSearchValue(res.data.text);
-
-        /* const response = await fetch("/api/whisper", {
-          method: "POST",
-          body: formData,
-        });
-        const text = await response.json();
-        console.log(text, "texttexttexttexttexttexttexttext"); 
-        console.log({ whisper: text });*/
       })
       .catch((e: any) => {
         alert("We could not retrieve your message");
@@ -247,7 +240,6 @@ const RightSideBar: React.FC<RightSideBarProps> = ({
                   )}
                   {generatedBios
                     .split("\n")
-                    .reverse()
                     .map((generatedBio: any, index: number) => {
                       if (generatedBio.trim() === "") return null;
                       return (

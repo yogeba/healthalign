@@ -50,25 +50,6 @@ function CommonHeader() {
           </Link>
         </div>
         <div className={`flex gap-3 items-center`}>
-          {/* <div className="flex items-start justify-end">
-            <div className="border flex border-[#5F5F5F] rounded-md">
-              <div className="px-[10px] flex justify-center items-center border-r border-[#5F5F5F]">
-                <Image
-                  alt="moetar"
-                  src="/images/icon/users-icon.svg"
-                  width={15}
-                  height={15}
-                  className="cursor-pointer"
-                />
-              </div>
-              <Link
-                href="/about"
-                className="capitalize cursor-pointer text-[10px] font-semibold text-[#5F5F5F] py-2.5 px-[13px]"
-              >
-                About Us
-              </Link>
-            </div>
-          </div> */}
           <div className="w-[35px] md:w-[40px] h-[35px] md:h-[40px] border rounded-full flex justify-center items-center flex-shrink-0">
             <Link href="/products">
               <Image

@@ -58,6 +58,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
 
   const performanceData = Object.entries(productData.properties).map(
     ([key, value], index) => {
+      console.log(key, value);
       const { found } = value as { found: any };
       // parseFloat(uspLimit)
       return {
@@ -73,46 +74,53 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
   const numDivs = Math.ceil(performanceData.length / 4);
 
   const addToCart = async (product: Product, isBuyNow: boolean) => {
-    console.log(product, "product this is product data new");
-    const input = {
-      items: {
-        amazonCartItemsInput: [],
-        shopifyCartItemsInput: [],
-      },
-    };
+    if (product?.isAvailable) {
+      const input: any = {
+        items: {
+          amazonCartItemsInput: [],
+          shopifyCartItemsInput: [],
+        },
+      };
 
-    const marketplace =
-      product?.marketplace === "AMAZON"
-        ? MARKETPLACE.AMAZON
-        : MARKETPLACE.SHOPIFY;
-    const productDetails = await fetchProduct(product.identifier, marketplace);
+      const marketplace =
+        product?.marketplace === "AMAZON"
+          ? MARKETPLACE.AMAZON
+          : MARKETPLACE.SHOPIFY;
+      const productDetails = await fetchProduct(
+        product.identifier,
+        marketplace
+      );
 
-    if (marketplace === MARKETPLACE.AMAZON) {
-      input.items.amazonCartItemsInput = [
-        { productId: product.identifier, quantity: 1 },
-      ];
-    }
+      if (marketplace === MARKETPLACE.AMAZON) {
+        input.items.amazonCartItemsInput = [
+          { productId: product.identifier, quantity: 1 },
+        ];
+      }
 
-    if (marketplace === MARKETPLACE.SHOPIFY) {
-      input.items.shopifyCartItemsInput = [
-        { variantId: product?.variants[0]?.id, quantity: 1 },
-      ];
-    }
+      if (marketplace === MARKETPLACE.SHOPIFY) {
+        input.items.shopifyCartItemsInput = [
+          { variantId: product?.variants[0]?.id, quantity: 1 },
+        ];
+      }
 
-    if (!cartId) {
-      // const { data: createCartData } = await createCart(input);
-      const createCartData = await createCart(input);
-      localStorage.setItem("cartId", createCartData.createCart.cart.id);
-      setCartId(createCartData.createCart.cart.id);
+      if (!cartId) {
+        // const { data: createCartData } = await createCart(input);
+        const createCartData = await createCart(input);
+        localStorage.setItem("cartId", createCartData.createCart.cart.id);
+        setCartId(createCartData.createCart.cart.id);
+      } else {
+        console.log(product);
+        await addCartItems({ id: cartId, items: input.items });
+      }
+
+      !isBuyNow
+        ? toast.success("Product added to cart")
+        : router.push("/checkout");
+
+      console.log(productDetails, "productDetails");
     } else {
-      await addCartItems({ id: cartId, items: input.items });
+      toast.error("Product is not available");
     }
-
-    !isBuyNow
-      ? toast.success("Product added to cart")
-      : router.push("/checkout");
-
-    console.log(productDetails, "productDetails");
   };
 
   const handleBuyNowClick = async (product: Product) => {
@@ -285,6 +293,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productData }) => {
                                 performance={+performance}
                                 quantity={quantity}
                                 key={idx}
+                                allData={data}
                               />
                             );
                           })}
